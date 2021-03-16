@@ -1,20 +1,16 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using SchoolDiary.Domain.Data;
+using SchoolDiary.Domain.Services;
+using SchoolDiary.Domain.Services.Interfaces;
 using SchoolDiary.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using SchoolDiary.Helpers.Interfaces;
 
 namespace SchoolDiary
 {
@@ -30,7 +26,11 @@ namespace SchoolDiary
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connstr = Configuration.GetConnectionString("DefaultConnection");
+            // Adding project services.
+            services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<IPasswordHasher, PasswordHasher>();
+            services.AddHttpContextAccessor();
+            // Adding database context.
             services.AddDbContext<DataContext>(options => 
                 options.UseSqlServer(Configuration
                     .GetConnectionString("DefaultConnection")));
@@ -75,7 +75,8 @@ namespace SchoolDiary
 
             app.UseAuthentication();
             app.UseAuthorization();
-
+            // todo: 
+            // app.UseMiddleware<JwtMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

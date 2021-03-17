@@ -8,7 +8,7 @@ namespace SchoolDiary.Domain.Services.Interfaces
 {
     public interface IAccountService
     {
-        string Login(LoginModel model);
+        string Authenticate(LoginModel model);
         void Register(RegisterModel model);
     }
 }

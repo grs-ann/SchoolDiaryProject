@@ -31,7 +31,7 @@ namespace SchoolDiary.Domain.Services
         // Secret cookie name for jwt token.
         //private const string CookieKey = "Bearer";
         // todo: remove unnecessary logic from the controller here.
-        public string Login(LoginModel model)
+        public string Authenticate(LoginModel model)
         {
             if (model != null)
             {
@@ -40,7 +40,12 @@ namespace SchoolDiary.Domain.Services
                 {
                     var jwt = CreateJWTToken(identity);
                     // Save the jwt-token to browser cookies.
-                    //_httpContextAccessor.HttpContext.Response.Cookies.Append(CookieKey, jwt);
+                    // .AspNetCore.Application.Id
+                    _httpContextAccessor.HttpContext.Response.Cookies.Append("Cookies", jwt,
+                        new CookieOptions
+                        {
+                            MaxAge = TimeSpan.FromMinutes(60)
+                        });
                     return jwt;
                 }
             }

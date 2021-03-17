@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace SchoolDiary.Domain.Data.Entities
 {
-    public class Role : BaseEntity
+    public class Class : BaseEntity
     {
         public string Name { get; set; }
-        public List<User> Users { get; set; } = new List<User>();
     }
 }

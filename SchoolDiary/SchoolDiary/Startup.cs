@@ -6,11 +6,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Http;
 using SchoolDiary.Domain.Data;
 using SchoolDiary.Domain.Services;
 using SchoolDiary.Domain.Services.Interfaces;
 using SchoolDiary.Helpers;
 using SchoolDiary.Helpers.Interfaces;
+using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.AspNetCore.Antiforgery;
+using SchoolDiary.Domain.Data.Entities;
 
 namespace SchoolDiary
 {
@@ -29,35 +33,35 @@ namespace SchoolDiary
             // Adding project services.
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IPasswordHasher, PasswordHasher>();
+            services.AddTransient(typeof(IBaseCRUDOperations<>), typeof(UserService<>));
             services.AddHttpContextAccessor();
             // Adding database context.
             services.AddDbContext<DataContext>(options => 
                 options.UseSqlServer(Configuration
                     .GetConnectionString("DefaultConnection")));
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddJwtBearer(options =>
+            // Authentication settins.
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
                     {
-                        options.RequireHttpsMetadata = false;
+                        options.RequireHttpsMetadata = true;
+                        options.SaveToken = true;
                         options.TokenValidationParameters = new TokenValidationParameters
                         {
-                            // укзывает, будет ли валидироваться издатель при валидации токена
                             ValidateIssuer = true,
-                            // строка, представляющая издателя
                             ValidIssuer = AuthOptions.ISSUER,
-
-                            // будет ли валидироваться потребитель токена
                             ValidateAudience = true,
-                            // установка потребителя токена
                             ValidAudience = AuthOptions.AUDIENCE,
-                            // будет ли валидироваться время существования
                             ValidateLifetime = true,
-
-                            // установка ключа безопасности
                             IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                            // валидация ключа безопасности
                             ValidateIssuerSigningKey = true,
                         };
                     });
+            services.AddCors();
             services.AddControllers();
         }
 
@@ -72,7 +76,12 @@ namespace SchoolDiary
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseCookiePolicy(new CookiePolicyOptions
+            {
+                MinimumSameSitePolicy = SameSiteMode.Strict,
+                HttpOnly = HttpOnlyPolicy.Always,
+                Secure = CookieSecurePolicy.Always
+            });
             app.UseAuthentication();
             app.UseAuthorization();
             // todo: 

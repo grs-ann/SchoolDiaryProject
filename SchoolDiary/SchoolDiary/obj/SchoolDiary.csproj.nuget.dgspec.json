@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Repositories\\SchoolProj\\SchoolDiaryProject\\SchoolDiary\\SchoolDiary\\SchoolDiary.csproj": {}
+    "D:\\RemoteRepositories\\SchoolProject\\SchoolDiary\\SchoolDiary\\SchoolDiary.csproj": {}
   },
   "projects": {
-    "D:\\Repositories\\SchoolProj\\SchoolDiaryProject\\SchoolDiary\\SchoolDiary\\SchoolDiary.csproj": {
+    "D:\\RemoteRepositories\\SchoolProject\\SchoolDiary\\SchoolDiary\\SchoolDiary.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Repositories\\SchoolProj\\SchoolDiaryProject\\SchoolDiary\\SchoolDiary\\SchoolDiary.csproj",
+        "projectUniqueName": "D:\\RemoteRepositories\\SchoolProject\\SchoolDiary\\SchoolDiary\\SchoolDiary.csproj",
         "projectName": "SchoolDiary",
-        "projectPath": "D:\\Repositories\\SchoolProj\\SchoolDiaryProject\\SchoolDiary\\SchoolDiary\\SchoolDiary.csproj",
-        "packagesPath": "C:\\Users\\Pasha_Python_senior\\.nuget\\packages\\",
-        "outputPath": "D:\\Repositories\\SchoolProj\\SchoolDiaryProject\\SchoolDiary\\SchoolDiary\\obj\\",
+        "projectPath": "D:\\RemoteRepositories\\SchoolProject\\SchoolDiary\\SchoolDiary\\SchoolDiary.csproj",
+        "packagesPath": "C:\\Users\\stepina\\.nuget\\packages\\",
+        "outputPath": "D:\\RemoteRepositories\\SchoolProject\\SchoolDiary\\SchoolDiary\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Pasha_Python_senior\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\stepina\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -26,6 +26,7 @@
         },
         "frameworks": {
           "netcoreapp3.1": {
+            "targetAlias": "netcoreapp3.1",
             "projectReferences": {}
           }
         },
@@ -37,6 +38,7 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
           "dependencies": {
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
@@ -75,7 +77,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.201\\RuntimeIdentifierGraph.json"
         }
       }
     }

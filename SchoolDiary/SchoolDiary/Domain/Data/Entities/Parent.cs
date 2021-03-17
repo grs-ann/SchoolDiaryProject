@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 
 namespace SchoolDiary.Domain.Data.Entities
 {
-    public class Role : BaseEntity
+    public class Parent
     {
-        public string Name { get; set; }
-        public List<User> Users { get; set; } = new List<User>();
+        // Link to 'Users' table.
+        public User User { get; set; }
+        public int UserId { get; set; }
     }
 }

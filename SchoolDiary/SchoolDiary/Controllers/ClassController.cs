@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SchoolDiary.Helpers
+namespace SchoolDiary.Controllers
 {
-    public static class ServiceProviderExtensions
+    public class ClassController
     {
     }
 }

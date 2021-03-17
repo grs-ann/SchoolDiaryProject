@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolDiary.Domain.Data.Entities;
+using SchoolDiary.Helpers;
 
 namespace SchoolDiary.Domain.Data
 {
@@ -13,28 +14,31 @@ namespace SchoolDiary.Domain.Data
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=PC726;Database=helloappdb;Trusted_Connection=True;");
+            //optionsBuilder.UseSqlServer("Server=PC726;Database=helloappdb;Trusted_Connection=True;");
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var adminRole = new Role { Id = 1, Name = "admin" };
             var userRole = new Role { Id = 2, Name = "user" };
-            var adminUser = new User
+            using (PasswordHasher ph = new PasswordHasher())
             {
-                Id = 1,
-                Login = "42ama",
-                Password = "123456",
-                RoleId = adminRole.Id
-            };
-            var defaultUser = new User
-            {
-                Id = 2,
-                Login = "user",
-                Password = "123456",
-                RoleId = userRole.Id
-            };
-            modelBuilder.Entity<User>().HasData(new User[] { adminUser, defaultUser });
-            modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole });
+                var adminUser = new User
+                {
+                    Id = 1,
+                    Login = "42ama",
+                    Password = ph.GenerateHash("qwerty"),
+                    RoleId = adminRole.Id
+                };
+                var defaultUser = new User
+                {
+                    Id = 2,
+                    Login = "grsann",
+                    Password = ph.GenerateHash("123456"),
+                    RoleId = userRole.Id
+                };
+                modelBuilder.Entity<User>().HasData(new User[] { adminUser, defaultUser });
+                modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole });
+            }
             base.OnModelCreating(modelBuilder);
         }
     }

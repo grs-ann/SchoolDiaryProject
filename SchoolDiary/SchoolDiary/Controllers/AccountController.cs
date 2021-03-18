@@ -39,8 +39,14 @@ namespace SchoolDiary.Controllers
                 errorText = "Неверный логин или пароль."
             });
         }
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+        [Authorize]
+        [HttpPost("unauthenticate")]
+        public IActionResult Unauthenticate()
+        {
+            _accountService.Unauthenticate();
+            return Ok("Unauthorized!");
+        }
+        [Authorize(Roles = "admin")]
         [HttpPost("register")]
         public IActionResult Register(RegisterModel model)
         {

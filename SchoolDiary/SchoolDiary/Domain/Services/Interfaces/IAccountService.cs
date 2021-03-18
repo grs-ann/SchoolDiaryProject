@@ -10,5 +10,6 @@ namespace SchoolDiary.Domain.Services.Interfaces
     {
         string Authenticate(LoginModel model);
         void Register(RegisterModel model);
+        void Unauthenticate();
     }
 }

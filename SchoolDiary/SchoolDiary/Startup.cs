@@ -15,6 +15,8 @@ using SchoolDiary.Helpers.Interfaces;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Antiforgery;
 using SchoolDiary.Domain.Data.Entities;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace SchoolDiary
 {
@@ -40,27 +42,27 @@ namespace SchoolDiary
                 options.UseSqlServer(Configuration
                     .GetConnectionString("DefaultConnection")));
             // Authentication settins.
-            services.AddAuthentication(options =>
+            services.AddAuthentication("OAuth")
+                .AddJwtBearer("OAuth", config =>
                 {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(options =>
+                    config.Events = new JwtBearerEvents
                     {
-                        options.RequireHttpsMetadata = true;
-                        options.SaveToken = true;
-                        options.TokenValidationParameters = new TokenValidationParameters
+                        OnMessageReceived = context =>
                         {
-                            ValidateIssuer = true,
-                            ValidIssuer = AuthOptions.ISSUER,
-                            ValidateAudience = true,
-                            ValidAudience = AuthOptions.AUDIENCE,
-                            ValidateLifetime = true,
-                            IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                            ValidateIssuerSigningKey = true,
-                        };
-                    });
+                            if (context.Request.Cookies.ContainsKey("refregeratorprice"))
+                            {
+                                context.Token = context.Request.Cookies["refregeratorprice"];
+                            }
+                            return Task.CompletedTask;
+                        }
+                    };
+                    config.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = AuthOptions.ISSUER,
+                        ValidAudience = AuthOptions.AUDIENCE,
+                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey()
+                    };
+                });
             services.AddCors();
             services.AddControllers();
         }

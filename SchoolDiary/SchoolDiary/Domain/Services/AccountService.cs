@@ -35,13 +35,13 @@ namespace SchoolDiary.Domain.Services
         {
             if (model != null)
             {
-                var identity = GetIdentity(model);
-                if (identity != null)
+                var claims = GetClaims(model);
+                if (claims != null)
                 {
-                    var jwt = CreateJWTToken(identity);
+                    var jwt = CreateJWTToken(claims);
                     // Save the jwt-token to browser cookies.
                     // .AspNetCore.Application.Id
-                    _httpContextAccessor.HttpContext.Response.Cookies.Append("Cookies", jwt,
+                    _httpContextAccessor.HttpContext.Response.Cookies.Append("refregeratorprice", jwt,
                         new CookieOptions
                         {
                             MaxAge = TimeSpan.FromMinutes(60)
@@ -50,6 +50,13 @@ namespace SchoolDiary.Domain.Services
                 }
             }
             return null;
+        }
+        public void Unauthenticate()
+        {
+            if (_httpContextAccessor.HttpContext.Request.Cookies.ContainsKey("refregeratorprice"))
+            {
+                _httpContextAccessor.HttpContext.Response.Cookies.Delete("refregeratorprice");
+            }
         }
         public void Register(RegisterModel model)
         {
@@ -67,21 +74,20 @@ namespace SchoolDiary.Domain.Services
                 _dbContext.SaveChanges();
             }
         }
-        private string CreateJWTToken(ClaimsIdentity identity)
+        private string CreateJWTToken(ClaimsIdentity claims)
         {
-            var utcNow = DateTime.UtcNow;
             // Create a JWT-token.
             var jwt = new JwtSecurityToken(
                 issuer: AuthOptions.ISSUER,
                     audience: AuthOptions.AUDIENCE,
-                    notBefore: utcNow,
-                    claims: identity.Claims,
-                    expires: utcNow.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
+                    notBefore: DateTime.Now,
+                    claims: claims.Claims,
+                    expires: DateTime.Now.Add(TimeSpan.FromSeconds(10)),
                     signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
             return encodedJwt;
         }
-        private ClaimsIdentity GetIdentity(LoginModel model)
+        private ClaimsIdentity GetClaims(LoginModel model)
         {
             var user = _dbContext.Users
                 .Include(r => r.Role)

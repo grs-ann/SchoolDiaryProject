@@ -9,7 +9,7 @@ namespace SchoolDiary.Domain.Services.Interfaces
     public interface IAccountService
     {
         string Authenticate(LoginModel model);
-        void Register(RegisterModel model);
+        Task RegisterAsync(RegisterModel model);
         void Unauthenticate();
     }
 }

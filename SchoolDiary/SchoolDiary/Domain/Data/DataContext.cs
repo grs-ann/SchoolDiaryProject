@@ -10,7 +10,6 @@ namespace SchoolDiary.Domain.Data
         public DbSet<User> Users { get; set; }
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

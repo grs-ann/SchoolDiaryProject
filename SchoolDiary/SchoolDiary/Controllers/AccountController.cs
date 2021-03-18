@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolDiary.Domain.Data;
 using SchoolDiary.Domain.Models.Authentication;
 using SchoolDiary.Domain.Services.Interfaces;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SchoolDiary.Controllers
 {
@@ -48,7 +47,7 @@ namespace SchoolDiary.Controllers
         }
         [Authorize(Roles = "admin")]
         [HttpPost("register")]
-        public IActionResult Register(RegisterModel model)
+        public async Task<IActionResult> Register(RegisterModel model)
         {
             if (_dbContext.Users.Any(u => u.Login == model.Login))
             {
@@ -56,7 +55,7 @@ namespace SchoolDiary.Controllers
             }
             if (ModelState.IsValid)
             {
-                _accountService.Register(model);
+                await _accountService.RegisterAsync(model);
                 return Ok();
             }
             return BadRequest(ModelState);

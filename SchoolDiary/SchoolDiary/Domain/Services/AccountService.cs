@@ -58,20 +58,18 @@ namespace SchoolDiary.Domain.Services
                 _httpContextAccessor.HttpContext.Response.Cookies.Delete("refregeratorprice");
             }
         }
-        public void Register(RegisterModel model)
+        public async Task RegisterAsync(RegisterModel model)
         {
             if (model != null)
             {
-                
-                var userRole = _dbContext.Roles.FirstOrDefault(r => r.Id == model.RoleId);
-                _dbContext.Users.Add(
+                await _dbContext.Users.AddAsync(
                     new User
                     {
                         Login = model.Login,
                         Password = _passwordHasher.GenerateHash(model.Password),
-                        Role = userRole
+                        RoleId = model.RoleId
                     });
-                _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync();
             }
         }
         private string CreateJWTToken(ClaimsIdentity claims)

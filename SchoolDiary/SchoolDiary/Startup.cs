@@ -86,8 +86,6 @@ namespace SchoolDiary
             });
             app.UseAuthentication();
             app.UseAuthorization();
-            // todo: 
-            // app.UseMiddleware<JwtMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

@@ -8,18 +8,31 @@ namespace SchoolDiary.Domain.Data
     {
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Student> Students { get; set; }
+        public DbSet<Class> Classes { get; set; }
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
+            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            //optionsBuilder.UseSqlServer("Server=PC726;Database=helloappdb;Trusted_Connection=True;");
-        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var adminRole = new Role { Id = 1, Name = "admin" };
             var userRole = new Role { Id = 2, Name = "user" };
+            modelBuilder.Entity<Class>().HasData(new Class[]
+            {
+                new Class
+                {
+                    Id = 1,
+                    Name = "7Г"
+                },
+                new Class
+                {
+                    Id = 2,
+                    Name = "8Б"
+                }
+            });
             using (PasswordHasher ph = new PasswordHasher())
             {
                 var adminUser = new User
@@ -27,14 +40,22 @@ namespace SchoolDiary.Domain.Data
                     Id = 1,
                     Login = "42ama",
                     Password = ph.GenerateHash("qwerty"),
-                    RoleId = adminRole.Id
+                    RoleId = adminRole.Id,
+                    Firstname = "Максим",
+                    Lastname = "Алонов",
+                    Patronymic = "Александрович",
+                    Phone = "+7-927-228-14-88"
                 };
                 var defaultUser = new User
                 {
                     Id = 2,
                     Login = "grsann",
                     Password = ph.GenerateHash("123456"),
-                    RoleId = userRole.Id
+                    RoleId = userRole.Id,
+                    Firstname = "Анна",
+                    Lastname = "Герасимова",
+                    Patronymic = "Сергеевна",
+                    Phone = "+7-927-777-77-77"
                 };
                 modelBuilder.Entity<User>().HasData(new User[] { adminUser, defaultUser });
                 modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole });

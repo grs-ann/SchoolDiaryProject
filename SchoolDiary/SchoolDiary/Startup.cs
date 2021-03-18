@@ -13,9 +13,6 @@ using SchoolDiary.Domain.Services.Interfaces;
 using SchoolDiary.Helpers;
 using SchoolDiary.Helpers.Interfaces;
 using Microsoft.AspNetCore.CookiePolicy;
-using Microsoft.AspNetCore.Antiforgery;
-using SchoolDiary.Domain.Data.Entities;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SchoolDiary
@@ -35,7 +32,7 @@ namespace SchoolDiary
             // Adding project services.
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IPasswordHasher, PasswordHasher>();
-            services.AddTransient(typeof(IBaseCRUDOperations<>), typeof(UserService<>));
+            services.AddTransient<IClassService, ClassService>();
             services.AddHttpContextAccessor();
             // Adding database context.
             services.AddDbContext<DataContext>(options => 

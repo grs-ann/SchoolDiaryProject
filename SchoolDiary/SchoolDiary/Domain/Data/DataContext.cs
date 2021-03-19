@@ -13,6 +13,7 @@ namespace SchoolDiary.Domain.Data
         public DbSet<Class> Classes { get; set; }
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
+            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
@@ -61,6 +62,29 @@ namespace SchoolDiary.Domain.Data
                 modelBuilder.Entity<User>().HasData(new User[] { adminUser, defaultUser });
                 modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole, teacherRole });
             }
+            modelBuilder.Entity<Subject>().HasData(new Subject[]
+            {
+                new Subject
+                {
+                    Id = 1,
+                    Title = "Алгебра"
+                },
+                new Subject
+                {
+                    Id = 2,
+                    Title = "Геометрия"
+                },
+                new Subject
+                {
+                    Id = 3,
+                    Title = "Физика"
+                },
+                new Subject
+                {
+                    Id = 4,
+                    Title = "Русский язык"
+                }
+            });
             base.OnModelCreating(modelBuilder);
         }
     }

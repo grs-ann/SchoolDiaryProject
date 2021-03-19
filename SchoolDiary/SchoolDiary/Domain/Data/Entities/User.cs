@@ -15,6 +15,9 @@ namespace SchoolDiary.Domain.Data.Entities
         public string Phone { get; set; }
         public int RoleId { get; set; }
         // User role.
-        public Role Role{ get; set; }  
+        public Role Role{ get; set; }
+
+        public Student Student { get; set; }
+        public Teacher Teacher { get; set; }
     }
 }

@@ -9,10 +9,10 @@ namespace SchoolDiary.Domain.Data
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Student> Students { get; set; }
+        public DbSet<Teacher> Teachers { get; set; }
         public DbSet<Class> Classes { get; set; }
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
@@ -20,6 +20,7 @@ namespace SchoolDiary.Domain.Data
         {
             var adminRole = new Role { Id = 1, Name = "admin" };
             var userRole = new Role { Id = 2, Name = "user" };
+            var teacherRole = new Role { Id = 3, Name = "teacher" };
             modelBuilder.Entity<Class>().HasData(new Class[]
             {
                 new Class
@@ -58,7 +59,7 @@ namespace SchoolDiary.Domain.Data
                     Phone = "+7-927-777-77-77"
                 };
                 modelBuilder.Entity<User>().HasData(new User[] { adminUser, defaultUser });
-                modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole });
+                modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole, teacherRole });
             }
             base.OnModelCreating(modelBuilder);
         }

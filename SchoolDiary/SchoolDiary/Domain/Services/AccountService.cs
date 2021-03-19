@@ -16,6 +16,13 @@ using System.Threading.Tasks;
 
 namespace SchoolDiary.Domain.Services
 {
+    public interface IAccountService
+    {
+        string Authenticate(LoginModel model);
+        Task<User> RegisterStudentAsync(RegisterStudentModel model);
+        Task<User> RegisterTeacherAsync(RegisterTeacherModel model);
+        void Unauthenticate();
+    }
     public class AccountService : IAccountService
     {
         private readonly DataContext _dbContext;
@@ -28,9 +35,6 @@ namespace SchoolDiary.Domain.Services
             _passwordHasher = passwordHasher;
             _httpContextAccessor = httpContextAccessor;
         }
-        // Secret cookie name for jwt token.
-        //private const string CookieKey = "Bearer";
-        // todo: remove unnecessary logic from the controller here.
         public string Authenticate(LoginModel model)
         {
             if (model != null)
@@ -58,19 +62,53 @@ namespace SchoolDiary.Domain.Services
                 _httpContextAccessor.HttpContext.Response.Cookies.Delete("refregeratorprice");
             }
         }
-        public async Task RegisterAsync(RegisterModel model)
+        public async Task<User> RegisterStudentAsync(RegisterStudentModel model)
         {
             if (model != null)
             {
-                await _dbContext.Users.AddAsync(
-                    new User
+                var newUser = BaseRegister(model);
+                await _dbContext.Users.AddAsync(newUser);
+                await _dbContext.Students.AddAsync(
+                    new Student
                     {
-                        Login = model.Login,
-                        Password = _passwordHasher.GenerateHash(model.Password),
-                        RoleId = model.RoleId
+                        User = newUser,
+                        ClassId = model.ClassId,
                     });
                 await _dbContext.SaveChangesAsync();
+                return newUser;
             }
+            return null;
+        }
+        public async Task<User> RegisterTeacherAsync(RegisterTeacherModel model)
+        {
+            if (model != null)
+            {
+                var newUser = BaseRegister(model);
+                await _dbContext.Users.AddAsync(newUser);
+                await _dbContext.Teachers.AddAsync(
+                    new Teacher
+                    {
+                        User = newUser,
+                        Salary = model.Salary
+                    });
+                await _dbContext.SaveChangesAsync();
+                return newUser;
+            }
+            return null;
+        }
+        private User BaseRegister(BaseRegisterModel model)
+        {
+            var user = new User
+            {
+                Login = model.Login,
+                Password = _passwordHasher.GenerateHash(model.Password),
+                Firstname = model.Firstname,
+                Lastname = model.Lastname,
+                Patronymic = model.Patronymic,
+                Phone = model.Phone,
+                RoleId = model.RoleId
+            };
+            return user;
         }
         private string CreateJWTToken(ClaimsIdentity claims)
         {

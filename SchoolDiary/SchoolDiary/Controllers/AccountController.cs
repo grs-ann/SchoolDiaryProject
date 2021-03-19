@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SchoolDiary.Domain.Data;
 using SchoolDiary.Domain.Models.Authentication;
-using SchoolDiary.Domain.Services.Interfaces;
+using SchoolDiary.Domain.Services;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -46,16 +46,31 @@ namespace SchoolDiary.Controllers
             return Ok("Unauthorized!");
         }
         [Authorize(Roles = "admin")]
-        [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterModel model)
+        [HttpPost("RegisterStudent")]
+        public async Task<IActionResult> RegisterStudent(RegisterStudentModel model)
         {
             if (_dbContext.Users.Any(u => u.Login == model.Login))
             {
-                ModelState.AddModelError("Error", "Аккаунт с таким названием уже существует.");
+                ModelState.AddModelError("Error", "Аккаунт с таким логином уже существует.");
             }
             if (ModelState.IsValid)
             {
-                await _accountService.RegisterAsync(model);
+                await _accountService.RegisterStudentAsync(model);
+                return Ok();
+            }
+            return BadRequest(ModelState);
+        }
+        [Authorize(Roles = "admin")]
+        [HttpPost("RegisterTeacher")]
+        public async Task<IActionResult> RegisterTeacher(RegisterTeacherModel model)
+        {
+            if (_dbContext.Users.Any(u => u.Login == model.Login))
+            {
+                ModelState.AddModelError("Error", "Аккаунт с таким логином уже существует.");
+            }
+            if (ModelState.IsValid)
+            {
+                await _accountService.RegisterTeacherAsync(model);
                 return Ok();
             }
             return BadRequest(ModelState);

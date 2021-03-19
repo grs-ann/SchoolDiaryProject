@@ -6,16 +6,14 @@ using System.Threading.Tasks;
 
 namespace SchoolDiary.Domain.Data.Entities
 {
-    [Keyless]
-    public class Student
+    public class Student : BaseEntity
     {
         // Link to 'Classes' table.
         public Class Class { get; set; }
         public int ClassId { get; set; }
 
-
         // Link to 'Users' table.
-        public virtual User User { get; set; }
+        public User User { get; set; }
         public int UserId { get; set; }
     }
 }

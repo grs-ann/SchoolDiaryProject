@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace SchoolDiary.Domain.Data.Entities
 {
-    public class Teacher
+    public class Teacher : BaseEntity
     {   
+        public decimal Salary { get; set; }
         // Link to 'Users' table.
         public User User { get; set; }
         public int UserId { get; set; }

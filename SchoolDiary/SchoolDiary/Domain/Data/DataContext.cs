@@ -11,9 +11,11 @@ namespace SchoolDiary.Domain.Data
         public DbSet<Student> Students { get; set; }
         public DbSet<Teacher> Teachers { get; set; }
         public DbSet<Class> Classes { get; set; }
+        public DbSet<Subject> Subjects { get; set; }
+        public DbSet<TeachersSubjects> TeachersSubjects { get; set; }
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-            Database.EnsureDeleted();
+            //Database.EnsureDeleted();
             Database.EnsureCreated();
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
@@ -57,9 +59,20 @@ namespace SchoolDiary.Domain.Data
                     Firstname = "Анна",
                     Lastname = "Герасимова",
                     Patronymic = "Сергеевна",
-                    Phone = "+7-927-777-77-77"
+                    Phone = "+7-927-777-77-77",
                 };
-                modelBuilder.Entity<User>().HasData(new User[] { adminUser, defaultUser });
+                var teacherUser = new User
+                {
+                    Id = 3,
+                    Login = "pasha",
+                    Password = ph.GenerateHash("123456"),
+                    RoleId = teacherRole.Id,
+                    Firstname = "Павел",
+                    Lastname = "Панфилов",
+                    Patronymic = "Вячеславович",
+                    Phone = "+7-927-748-99-99"
+                };
+                modelBuilder.Entity<User>().HasData(new User[] { adminUser, defaultUser, teacherUser });
                 modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole, teacherRole });
             }
             modelBuilder.Entity<Subject>().HasData(new Subject[]
@@ -73,7 +86,7 @@ namespace SchoolDiary.Domain.Data
                 {
                     Id = 2,
                     Title = "Геометрия"
-                },
+                }, 
                 new Subject
                 {
                     Id = 3,
@@ -85,6 +98,7 @@ namespace SchoolDiary.Domain.Data
                     Title = "Русский язык"
                 }
             });
+            modelBuilder.Entity<Teacher>().HasData(new Teacher { Id = 1, Salary = 228000, UserId = 3 });
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -7,7 +7,12 @@ namespace SchoolDiary.Domain.Data.Entities
 {
     public class TeachersSubjects : BaseEntity
     {
-        public List<Teacher> Teachers { get; set; } = new List<Teacher>();
-        public List<Subject> Subjects { get; set; } = new List<Subject>();
+        // Link to 'Classes' table.
+        public Teacher Teacher { get; set; }
+        public int TeacherId { get; set; }
+
+        // Link to 'Users' table.
+        public Subject Subject { get; set; }
+        public int SubjectId { get; set; }
     }
 }

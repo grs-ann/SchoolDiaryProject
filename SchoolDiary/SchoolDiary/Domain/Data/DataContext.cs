@@ -13,6 +13,7 @@ namespace SchoolDiary.Domain.Data
         public DbSet<Class> Classes { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<TeachersSubjects> TeachersSubjects { get; set; }
+        public DbSet<TeachersClasses> TeachersClasses { get; set; }
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
             //Database.EnsureDeleted();

@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 
 namespace SchoolDiary.Domain.Data.Entities
 {
-    public class Mark
+    public class Mark : BaseEntity
     {
+        public string Name { get; set; }
     }
 }

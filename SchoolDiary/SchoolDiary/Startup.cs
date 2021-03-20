@@ -33,6 +33,7 @@ namespace SchoolDiary
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IPasswordHasher, PasswordHasher>();
             services.AddTransient<IClassService, ClassService>();
+            services.AddTransient<ITeachersEditService, TeachersEditService>();
             services.AddHttpContextAccessor();
             // Adding database context.
             services.AddDbContext<DataContext>(options => 

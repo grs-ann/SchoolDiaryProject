@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 
 namespace SchoolDiary.Controllers
 {
+    /// <summary>
+    /// This controller provides possibility
+    /// to work with teachers.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     [Authorize(Roles = "admin")]
@@ -19,12 +23,22 @@ namespace SchoolDiary.Controllers
         {
             _teachersEditService = teachersEditService;
         }
+        /// <summary>
+        /// Gets all teachers from
+        /// database 'Teachers' table.
+        /// </summary>
+        /// <returns>All teachers data.</returns>
         [HttpGet("GetAllTeachers")]
         public IActionResult GetAllTeachers()
         {
             var teachers = _teachersEditService.GetAll();
             return Ok(teachers);
         }
+        /// <summary>
+        /// Gets teacher by id.
+        /// </summary>
+        /// <param name="id">Teacher Id.</param>
+        /// <returns>Teacher data.</returns>
         [HttpGet("GetTeacher")]
         public async Task<IActionResult> GetTeacher(int id)
         {
@@ -36,6 +50,12 @@ namespace SchoolDiary.Controllers
             }
             return Ok(teacher);
         }
+        /// <summary>
+        /// Deletes teacher from database
+        /// 'Users' table.
+        /// </summary>
+        /// <param name="id">Teacher Id in 'Teachers' table.</param>
+        /// <returns>Result of deleting teacher.</returns>
         [HttpDelete("DeleteTeacher")]
         public async Task<IActionResult> DeleteTeacher(int id)
         {
@@ -47,6 +67,12 @@ namespace SchoolDiary.Controllers
             }
             return Ok();
         }
+        /// <summary>
+        /// Edit's teacher entity in database
+        /// 'Teachers' table.
+        /// </summary>
+        /// <param name="model">Contains 'Teachers' columns for editing.</param>
+        /// <returns>Result of teacher editing.</returns>
         [HttpPut("EditTeacher")]
         public async Task<IActionResult> EditTeacher(TeacherModel model)
         {
@@ -58,6 +84,12 @@ namespace SchoolDiary.Controllers
             }
             return Ok($"Учитель был изменён.");
         }
+        /// <summary>
+        /// Adds class to teacher by 
+        /// teacher and subject id's.
+        /// </summary>
+        /// <param name="model">Contains teacher and class id's.</param>
+        /// <returns>Result of class adding to teacher.</returns>
         [HttpPost("AddClassToTeacher")]
         public async Task<IActionResult> AddClassToTeacher(TeachersAndClassesModel model)
         {
@@ -73,6 +105,12 @@ namespace SchoolDiary.Controllers
             }
             return BadRequest(ModelState);
         }
+        /// <summary>
+        /// Deletes class from teacher by 
+        /// teacher and subject id's.
+        /// </summary>
+        /// <param name="model">Contains teacher and class id's.</param>
+        /// <returns>Result of class deleting from teacher.</returns>
         [HttpDelete("DeleteClassFromTeacher")]
         public async Task<IActionResult> DeleteClassFromTeacher(TeachersAndClassesModel model)
         {
@@ -88,6 +126,12 @@ namespace SchoolDiary.Controllers
             }
             return BadRequest(ModelState);
         }
+        /// <summary>
+        /// Adds subject to teacher by 
+        /// teacher and subject id's.
+        /// </summary>
+        /// <param name="model">Contains teacher and subject id's.</param>
+        /// <returns>Result of subject adding to teacher.</returns>
         [HttpPost("AddSubjectToTeacher")]
         public async Task<IActionResult> AddSubjectToTeacher(TeachersAndSubjectsModel model)
         {
@@ -103,6 +147,12 @@ namespace SchoolDiary.Controllers
             }
             return BadRequest(ModelState);
         }
+        /// <summary>
+        /// Deletes subject from teacher by 
+        /// teacher and subject id's.
+        /// </summary>
+        /// <param name="model">Contains teacher and subject id's.</param>
+        /// <returns>Result of subject deleting from teacher.</returns>
         [HttpDelete("DeleteSubjectFromTeacher")]
         public async Task<IActionResult> DeleteSubjectFromTeacher(TeachersAndSubjectsModel model)
         {

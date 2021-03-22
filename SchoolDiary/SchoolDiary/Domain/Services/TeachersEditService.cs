@@ -134,7 +134,5 @@ namespace SchoolDiary.Domain.Services
             }
             return null;
         }
-
-        
     }
 }

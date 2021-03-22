@@ -35,6 +35,7 @@ namespace SchoolDiary
             services.AddTransient<IClassService, ClassService>();
             services.AddTransient<ITeachersEditService, TeachersEditService>();
             services.AddTransient<IStudentsEditService, StudentsEditService>();
+            services.AddTransient<IScheduleEditService, ScheduleEditService>();
             services.AddHttpContextAccessor();
             // Adding database context.
             services.AddDbContext<DataContext>(options => 

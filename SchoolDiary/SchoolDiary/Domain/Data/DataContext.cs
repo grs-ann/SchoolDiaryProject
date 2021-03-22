@@ -14,6 +14,11 @@ namespace SchoolDiary.Domain.Data
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<TeachersSubjects> TeachersSubjects { get; set; }
         public DbSet<TeachersClasses> TeachersClasses { get; set; }
+        public DbSet<Schedule> Schedules { get; set; }
+        public DbSet<Day> Days { get; set; }
+        public DbSet<Time> Times { get; set; }
+        public DbSet<LessonTime> LessonTimes { get; set; }
+
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
             //Database.EnsureDeleted();
@@ -100,7 +105,90 @@ namespace SchoolDiary.Domain.Data
                 }
             });
             modelBuilder.Entity<Teacher>().HasData(new Teacher { Id = 1, Salary = 228000, UserId = 3 });
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Time>().HasData(
+                new Time[]
+                {
+                    new Time
+                    {
+                        Id = 1,
+                        LessonTime = "8:00-8:45"
+                    },
+                    new Time
+                    {
+                        Id = 2,
+                        LessonTime = "8:55-9:40"
+                    },
+                    new Time
+                    {
+                        Id = 3,
+                        LessonTime = "10:00-10:45"
+                    },
+                    new Time
+                    {
+                        Id = 4,
+                        LessonTime = "11:05-11:50"
+                    },
+                    new Time
+                    {
+                        Id = 5,
+                        LessonTime = "12:00-12:45"
+                    },
+                    new Time
+                    {
+                        Id = 6,
+                        LessonTime = "12:55-13:40"
+                    },
+                    new Time
+                    {
+                        Id = 7,
+                        LessonTime = "13:50-14:35"
+                    },
+                    new Time
+                    {
+                        Id = 8,
+                        LessonTime = "14:45-15:30"
+                    },
+                });
+            modelBuilder.Entity<Day>().HasData(new Day[]
+                    {
+                        new Day
+                        {
+                            Id = 1,
+                            Name = "Понедельник"
+                        },
+                        new Day
+                        {
+                            Id = 2,
+                            Name = "Вторник"
+                        },
+                        new Day
+                        {
+                            Id = 3,
+                            Name = "Среда"
+                        },
+                        new Day
+                        {
+                            Id = 4,
+                            Name = "Четверг"
+                        },
+                        new Day
+                        {
+                            Id = 5,
+                            Name = "Пятница"
+                        },
+                        new Day
+                        {
+                            Id = 6,
+                            Name = "Суббота"
+                        },
+                        new Day
+                        {
+                            Id = 7,
+                            Name = "Воскресенье"
+                        },
+                    });
+
+           base.OnModelCreating(modelBuilder);
         }
     }
 }

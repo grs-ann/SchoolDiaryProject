@@ -7,6 +7,6 @@ namespace SchoolDiary.Domain.Data.Entities
 {
     public class Time : BaseEntity 
     {
-        public DateTime LessonTime { get; set; }
+        public string LessonTime { get; set; }
     }
 }

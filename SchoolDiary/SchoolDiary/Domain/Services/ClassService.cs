@@ -26,9 +26,11 @@ namespace SchoolDiary.Domain.Services
     public class ClassService : IClassService
     {
         private readonly DataContext _dbContext;
-        public ClassService(DataContext dbContext)
+        private readonly IScheduleEditService _scheduleEditService;
+        public ClassService(DataContext dbContext, IScheduleEditService scheduleEditService)
         {
             _dbContext = dbContext;
+            _scheduleEditService = scheduleEditService;
         }
         public IEnumerable<Class> GetAll()
         {
@@ -43,7 +45,7 @@ namespace SchoolDiary.Domain.Services
         }
         public async Task<Class> AddNewClassAsync(string name)
         {
-            var existingClass = _dbContext.Classes
+            var existingClass = await _dbContext.Classes
                 .FirstOrDefaultAsync(c => c.Name == name);
             if (existingClass == null)
             {

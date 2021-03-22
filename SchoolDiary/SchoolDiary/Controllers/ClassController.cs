@@ -16,9 +16,11 @@ namespace SchoolDiary.Controllers
     public class ClassController : Controller
     {
         private readonly IClassService _classService;
-        public ClassController(IClassService classService)
+        private readonly IScheduleEditService _scheduleEditService;
+        public ClassController(IClassService classService, IScheduleEditService scheduleEditService)
         {
             _classService = classService;
+            _scheduleEditService = scheduleEditService;
         }
         /// <summary>
         /// Gets all classes from database 'Classes' table.

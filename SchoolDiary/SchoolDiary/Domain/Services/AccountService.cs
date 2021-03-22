@@ -16,6 +16,10 @@ using System.Threading.Tasks;
 
 namespace SchoolDiary.Domain.Services
 {
+    /// <summary>
+    /// This interface represents
+    /// opeartions with accounts.
+    /// </summary>
     public interface IAccountService
     {
         string Authenticate(LoginModel model);
@@ -23,6 +27,10 @@ namespace SchoolDiary.Domain.Services
         Task<User> RegisterTeacherAsync(RegisterTeacherModel model);
         void Unauthenticate();
     }
+    /// <summary>
+    /// This service contains a set of methods 
+    /// with logic for managing accounts and authenticate.
+    /// </summary>
     public class AccountService : IAccountService
     {
         private readonly DataContext _dbContext;
@@ -55,13 +63,22 @@ namespace SchoolDiary.Domain.Services
             }
             return null;
         }
+        /// <summary>
+        /// Unauthenticates user for request.
+        /// </summary>
         public void Unauthenticate()
         {
             if (_httpContextAccessor.HttpContext.Request.Cookies.ContainsKey("refregeratorprice"))
             {
+                // Delete JWT-token from browser cookies.
                 _httpContextAccessor.HttpContext.Response.Cookies.Delete("refregeratorprice");
             }
         }
+        /// <summary>
+        /// Register a new student.
+        /// </summary>
+        /// <param name="model">Register Student Model.</param>
+        /// <returns>Registered user.</returns>
         public async Task<User> RegisterStudentAsync(RegisterStudentModel model)
         {
             if (model != null)
@@ -79,6 +96,11 @@ namespace SchoolDiary.Domain.Services
             }
             return null;
         }
+        /// <summary>
+        /// Register a new teacher.
+        /// </summary>
+        /// <param name="model">Register Teacher Model.</param>
+        /// <returns>Registered user.</returns>
         public async Task<User> RegisterTeacherAsync(RegisterTeacherModel model)
         {
             if (model != null)
@@ -96,6 +118,11 @@ namespace SchoolDiary.Domain.Services
             }
             return null;
         }
+        /// <summary>
+        /// Register a new 'base' user(not teacher or student).
+        /// </summary>
+        /// <param name="model">Base Registe rModel</param>
+        /// <returns>Registered user.</returns>
         private User BaseRegister(BaseRegisterModel model)
         {
             var user = new User
@@ -110,6 +137,11 @@ namespace SchoolDiary.Domain.Services
             };
             return user;
         }
+        /// <summary>
+        /// Creates a JWT-token.
+        /// </summary>
+        /// <param name="claims">Contains user information for JWT-body.</param>
+        /// <returns>string JWT-token.</returns>
         private string CreateJWTToken(ClaimsIdentity claims)
         {
             // Create a JWT-token.
@@ -123,6 +155,12 @@ namespace SchoolDiary.Domain.Services
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
             return encodedJwt;
         }
+        /// <summary>
+        /// Gets user claims.
+        /// </summary>
+        /// <param name="model">Contains user login and password. 
+        /// Come from frontend part.</param>
+        /// <returns>ClaimsIdentity, contained user login and his role.</returns>
         private ClaimsIdentity GetClaims(LoginModel model)
         {
             var user = _dbContext.Users

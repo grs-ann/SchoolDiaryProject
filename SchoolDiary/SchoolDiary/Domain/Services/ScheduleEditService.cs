@@ -2,10 +2,6 @@
 using SchoolDiary.Domain.Data;
 using SchoolDiary.Domain.Data.Entities;
 using SchoolDiary.Domain.Models.Schedule;
-using SchoolDiary.Domain.Services.Interfaces;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 

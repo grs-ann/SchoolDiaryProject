@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace SchoolDiary.Controllers
 {
+    /// <summary>
+    /// This controller manages the authentication logic.
+    /// At this project authenticate system realized with 
+    /// JWT tokens.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class AccountController : Controller
@@ -19,6 +24,12 @@ namespace SchoolDiary.Controllers
             _dbContext = dbContext;
             _accountService = accountService;
         }
+        /// <summary>
+        /// Provides way to authenticate for users.
+        /// </summary>
+        /// <param name="model">User entered data from account,
+        /// come from the frontent part.</param>
+        /// <returns>Result of authenticate.</returns>
         [HttpPost("authenticate")]
         public IActionResult Authenticate(LoginModel model)
         {
@@ -38,6 +49,10 @@ namespace SchoolDiary.Controllers
                 errorText = "Неверный логин или пароль."
             });
         }
+        /// <summary>
+        /// Provides way to unauthenticate(logout) for users.
+        /// </summary>
+        /// <returns>Result of unauthenticate.</returns>
         [Authorize]
         [HttpPost("unauthenticate")]
         public IActionResult Unauthenticate()
@@ -45,6 +60,12 @@ namespace SchoolDiary.Controllers
             _accountService.Unauthenticate();
             return Ok("Unauthorized!");
         }
+        /// <summary>
+        /// Registers new student.
+        /// </summary>
+        /// <param name="model">Entered data containes student information,
+        /// come from the frontent part.</param>
+        /// <returns>Result of new student register.</returns>
         [Authorize(Roles = "admin")]
         [HttpPost("RegisterStudent")]
         public async Task<IActionResult> RegisterStudent(RegisterStudentModel model)
@@ -60,6 +81,12 @@ namespace SchoolDiary.Controllers
             }
             return BadRequest(ModelState);
         }
+        /// <summary>
+        /// Registers new teacher.
+        /// </summary>
+        /// <param name="model">Entered data containes teacher information,
+        /// come from the frontent part.</param>
+        /// <returns>Result of new teacher register.</returns>
         [Authorize(Roles = "admin")]
         [HttpPost("RegisterTeacher")]
         public async Task<IActionResult> RegisterTeacher(RegisterTeacherModel model)

@@ -10,6 +10,10 @@ using System.Threading.Tasks;
 
 namespace SchoolDiary.Domain.Services
 {
+    /// <summary>
+    /// This interface represents operations
+    /// for work with database 'Teachers' and related with this tables.
+    /// </summary>
     public interface ITeachersEditService : ICRUD<Teacher>
     {
         Task<TeachersClasses> AddClassToTeacher(int teacherId, int classId);
@@ -18,6 +22,10 @@ namespace SchoolDiary.Domain.Services
         Task<TeachersSubjects> DeleteSubjectFromTeacher(int teacherId, int subjectId);
         Task<Teacher> EditTeacherAsync(TeacherModel model);
     }
+    /// <summary>
+    /// This service contains a set of methods 
+    /// with logic for managing teachers.
+    /// </summary>
     public class TeachersEditService : ITeachersEditService
     {
         private readonly DataContext _dbContext;
@@ -25,17 +33,33 @@ namespace SchoolDiary.Domain.Services
         {
             _dbContext = dbContext;
         }
+        /// <summary>
+        /// Gets all teachers from database
+        /// 'Teachers' table.
+        /// </summary>
+        /// <returns>All teachers.</returns>
         public IEnumerable<Teacher> GetAll()
         {
             var teachers = _dbContext.Teachers;
             return teachers;
         }
+        /// <summary>
+        /// Gets concrete Teacher by Id.
+        /// </summary>
+        /// <param name="id">Teacher Id.</param>
+        /// <returns>Teacher.</returns>
         public async Task<Teacher> GetByIdAsync(int id)
         {
             var teacher = await _dbContext.Teachers
                 .FirstOrDefaultAsync(t => t.Id == id);
             return teacher;
         }
+        /// <summary>
+        /// Edits teacher in database
+        /// 'Teachers' table.
+        /// </summary>
+        /// <param name="model">Contains teacher Id and salary.</param>
+        /// <returns>Edited teacher.</returns>
         public async Task<Teacher> EditTeacherAsync(TeacherModel model)
         {
             var teacher = await this.GetByIdAsync(model.Id);
@@ -47,6 +71,12 @@ namespace SchoolDiary.Domain.Services
             }
             return null;
         }
+        /// <summary>
+        /// Deletes teacher(as User) from
+        /// database 'Users', 'Teachers' tables by teacher Id.
+        /// </summary>
+        /// <param name="id">Teacher Id.</param>
+        /// <returns>Deleted teacher.</returns>
         public async Task<Teacher> DeleteByIdAsync(int id)
         {
             var userToDelete = await _dbContext.Users.Include(u => u.Teacher).FirstOrDefaultAsync(u => u.Teacher.Id == id);
@@ -58,6 +88,12 @@ namespace SchoolDiary.Domain.Services
             }
             return null;
         }
+        /// <summary>
+        /// Adds class to teacher by theirs ids.
+        /// </summary>
+        /// <param name="teacherId">Teacher Id.</param>
+        /// <param name="classId">Class Id.</param>
+        /// <returns></returns>
         public async Task<TeachersClasses> AddClassToTeacher(int teacherId, int classId)
         {
             var teacher = await _dbContext.Teachers
@@ -77,6 +113,12 @@ namespace SchoolDiary.Domain.Services
             }
             return null;
         }
+        /// <summary>
+        /// Deletes class for teacher by theirs ids.
+        /// </summary>
+        /// <param name="teacherId">Teacher Id.</param>
+        /// <param name="classId">Class Id.</param>
+        /// <returns>Deleted TeachersClasses item.</returns>
         public async Task<TeachersClasses> DeleteClassForTeacher(int teacherId, int classId)
         {
             var teacher = await _dbContext.Teachers
@@ -96,6 +138,12 @@ namespace SchoolDiary.Domain.Services
             }
             return null;
         }
+        /// <summary>
+        /// Adds subject to teacher by theirs ids.
+        /// </summary>
+        /// <param name="teacherId">Teacher Id.</param>
+        /// <param name="subjectId">Subject Id.</param>
+        /// <returns>TeachersSubjects table item.</returns>
         public async Task<TeachersSubjects> AddSubjectToTeacher(int teacherId, int subjectId)
         {
             var teacher = await _dbContext.Teachers
@@ -115,6 +163,12 @@ namespace SchoolDiary.Domain.Services
             }
             return null;
         }
+        /// <summary>
+        /// Deletes subject from teacher by theirs ids.
+        /// </summary>
+        /// <param name="teacherId">Teacher Id.</param>
+        /// <param name="subjectId">Subject Id.</param>
+        /// <returns>Deleted TeachersSubjects item.</returns>
         public async Task<TeachersSubjects> DeleteSubjectFromTeacher(int teacherId, int subjectId)
         {
             var teacher = await _dbContext.Teachers

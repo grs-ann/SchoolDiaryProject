@@ -10,10 +10,18 @@ using System.Threading.Tasks;
 
 namespace SchoolDiary.Domain.Services
 {
+    /// <summary>
+    /// This interface represents operations
+    /// for work with database 'Students', 'Classes' tables.
+    /// </summary>
     public interface IStudentsEditService : ICRUD<Student>
     {
         Task<Student> ChangeClassForStudent(StudentsAndClassesModel model);
     }
+    /// <summary>
+    /// This service contains a set of methods 
+    /// with logic for managing students.
+    /// </summary>
     public class StudentsEditService : IStudentsEditService
     {
         private readonly DataContext _dbContext;
@@ -21,6 +29,11 @@ namespace SchoolDiary.Domain.Services
         {
             _dbContext = dbContext;
         }
+        /// <summary>
+        /// Changes class for concrete student.
+        /// </summary>
+        /// <param name="model">Contains student Id and class Id.</param>
+        /// <returns>Changed student.</returns>
         public async Task<Student> ChangeClassForStudent(StudentsAndClassesModel model)
         {
             var _class = await _dbContext.Classes
@@ -34,18 +47,32 @@ namespace SchoolDiary.Domain.Services
             }
             return null;
         }
+        /// <summary>
+        /// Deletes student by Id.
+        /// </summary>
+        /// <param name="id">Student Id.</param>
+        /// <returns>Deleted Student.</returns>
         public async Task<Student> DeleteByIdAsync(int id)
         {
             var student = await _dbContext.Students
                 .FirstOrDefaultAsync(t => t.Id == id);
             return student;
         }
+        /// <summary>
+        /// Gets all students from database
+        /// 'Students' table.
+        /// </summary>
+        /// <returns>All students.</returns>
         public IEnumerable<Student> GetAll()
         {
             var students = _dbContext.Students;
             return students;
         }
-
+        /// <summary>
+        /// Gets concrete student by Id.
+        /// </summary>
+        /// <param name="id">Student Id.</param>
+        /// <returns>Student, which includes his class data.</returns>
         public async Task<Student> GetByIdAsync(int id)
         {
             var student = await _dbContext.Students

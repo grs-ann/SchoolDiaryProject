@@ -6,7 +6,6 @@
       <input type="text" v-model="firstname" placeholder="enter firstname"/><br>
       <label>Lastname</label>
       <input type="text" v-model="lastname" placeholder="enter lastname"/><br>
- 
       <button>Save</button>
     </form>
   </div>

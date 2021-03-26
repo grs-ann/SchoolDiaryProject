@@ -1,4 +1,4 @@
-# schoolvuejs
+# frontent_part_vue
 
 ## Project setup
 ```

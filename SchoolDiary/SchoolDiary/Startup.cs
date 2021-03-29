@@ -9,11 +9,11 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Http;
 using SchoolDiary.Domain.Data;
 using SchoolDiary.Domain.Services;
-using SchoolDiary.Domain.Services.Interfaces;
 using SchoolDiary.Helpers;
 using SchoolDiary.Helpers.Interfaces;
 using Microsoft.AspNetCore.CookiePolicy;
 using System.Threading.Tasks;
+using VueCliMiddleware;
 
 namespace SchoolDiary
 {
@@ -65,7 +65,7 @@ namespace SchoolDiary
                 });
             services.AddCors();
             services.AddControllers();
-            services.AddSpaStaticFiles(options => options.RootPath = "client-app/dist");
+            services.AddSpaStaticFiles(options => options.RootPath = "ClientApp");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -79,6 +79,7 @@ namespace SchoolDiary
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseSpaStaticFiles();
             app.UseCookiePolicy(new CookiePolicyOptions
             {
                 MinimumSameSitePolicy = SameSiteMode.Strict,
@@ -97,15 +98,20 @@ namespace SchoolDiary
             {
                 endpoints.MapControllers();
             });
-
-            app.UseSpaStaticFiles();
+            
             app.UseSpa(spa =>
             {
-                spa.Options.SourcePath = "client-app";
                 if (env.IsDevelopment())
                 {
-                    // Launch development server for Vue.js.
-                    spa.UseVueDevelopmentServer();
+                    spa.Options.SourcePath = "frontent_part_vue/";
+                }
+                else
+                {
+                    spa.Options.SourcePath = "dist";
+                }
+                if (env.IsDevelopment())
+                {
+                    spa.UseVueCli(npmScript: "serve");
                 }
             });
         }

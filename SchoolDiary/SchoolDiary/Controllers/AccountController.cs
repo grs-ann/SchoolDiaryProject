@@ -13,6 +13,7 @@ namespace SchoolDiary.Controllers
     /// At this project authenticate system realized with 
     /// JWT tokens.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class AccountController : Controller
@@ -30,35 +31,16 @@ namespace SchoolDiary.Controllers
         /// <param name="model">User entered data from account,
         /// come from the frontent part.</param>
         /// <returns>Result of authenticate.</returns>
+        [AllowAnonymous]
         [HttpPost("authenticate")]
-        public IActionResult Authenticate(LoginModel model)
+        public IActionResult Authenticate([FromBody]LoginModel model)
         {
-            if (model != null)
+            var user = _accountService.Authenticate(model.Login, model.Password);
+            if (user != null)
             {
-                var decodedJWT = _accountService.Authenticate(model);
-                if (decodedJWT != null)
-                {
-                    return Json(new 
-                    {
-                        access_token = decodedJWT
-                    });
-                }
+                return Ok(user);
             }
-            return BadRequest(new
-            {
-                errorText = "Неверный логин или пароль."
-            });
-        }
-        /// <summary>
-        /// Provides way to unauthenticate(logout) for users.
-        /// </summary>
-        /// <returns>Result of unauthenticate.</returns>
-        [Authorize]
-        [HttpPost("unauthenticate")]
-        public IActionResult Unauthenticate()
-        {
-            _accountService.Unauthenticate();
-            return Ok("Unauthorized!");
+            return BadRequest(new { message = "Неверный логин или пароль." });
         }
         /// <summary>
         /// Registers new student.

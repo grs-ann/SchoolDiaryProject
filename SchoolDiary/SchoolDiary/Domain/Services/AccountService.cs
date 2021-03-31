@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SchoolDiary.Domain.Data;
 using SchoolDiary.Domain.Data.Entities;
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SchoolDiary.Domain.Services
@@ -22,10 +24,9 @@ namespace SchoolDiary.Domain.Services
     /// </summary>
     public interface IAccountService
     {
-        string Authenticate(LoginModel model);
+        User Authenticate(string login, string password);
         Task<User> RegisterStudentAsync(RegisterStudentModel model);
         Task<User> RegisterTeacherAsync(RegisterTeacherModel model);
-        void Unauthenticate();
     }
     /// <summary>
     /// This service contains a set of methods 
@@ -35,44 +36,51 @@ namespace SchoolDiary.Domain.Services
     {
         private readonly DataContext _dbContext;
         private readonly IPasswordHasher _passwordHasher;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public AccountService(DataContext dbContext, IPasswordHasher passwordHasher,
-            IHttpContextAccessor httpContextAccessor)
+        private readonly AppSettings _appSettings;
+        public AccountService(DataContext dbContext,
+            IPasswordHasher passwordHasher,
+            IOptions<AppSettings> appSettings)
         {
             _dbContext = dbContext;
             _passwordHasher = passwordHasher;
-            _httpContextAccessor = httpContextAccessor;
+            _appSettings = appSettings.Value;
         }
-        public string Authenticate(LoginModel model)
+        public User Authenticate(string login, string password)
         {
-            if (model != null)
+            var user = _dbContext.Users
+                .Include(u => u.Role)
+                .FirstOrDefault(u => u.Login == login);
+            if (user != null && _passwordHasher.IsPasswordMatchingHash(password, user.Password))
             {
-                var claims = GetClaims(model);
-                if (claims != null)
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+                var tokenDescriptor = new SecurityTokenDescriptor
                 {
-                    var jwt = CreateJWTToken(claims);
-                    // Save the jwt-token to browser cookies.
-                    // .AspNetCore.Application.Id
-                    _httpContextAccessor.HttpContext.Response.Cookies.Append("refregeratorprice", jwt,
-                        new CookieOptions
-                        {
-                            MaxAge = TimeSpan.FromMinutes(60)
-                        });
-                    return jwt;
-                }
+                    Subject = new ClaimsIdentity(new Claim[]
+                    {
+                    new Claim(ClaimTypes.Name, user.Id.ToString()),
+                    new Claim(ClaimTypes.Role, user.Role.Name)
+                    }),
+                    Expires = DateTime.UtcNow.AddDays(7),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                };
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                user.Token = tokenHandler.WriteToken(token);
+                /*var test_user = new TempUser
+                {
+                    FirstName = "Анна",
+                    Id = 1,
+                    LastName = "Герасимова",
+                    Role = "Admin",
+                    Password = null,
+                    Token = tokenHandler.WriteToken(token),
+                    Username = "grs_ann",
+                    ROFL = "34123hflas"
+                };*/
+                //return test_user;
+                return user.WithoutPassword();
             }
             return null;
-        }
-        /// <summary>
-        /// Unauthenticates user for request.
-        /// </summary>
-        public void Unauthenticate()
-        {
-            if (_httpContextAccessor.HttpContext.Request.Cookies.ContainsKey("refregeratorprice"))
-            {
-                // Delete JWT-token from browser cookies.
-                _httpContextAccessor.HttpContext.Response.Cookies.Delete("refregeratorprice");
-            }
         }
         /// <summary>
         /// Register a new student.
@@ -136,51 +144,6 @@ namespace SchoolDiary.Domain.Services
                 RoleId = model.RoleId
             };
             return user;
-        }
-        /// <summary>
-        /// Creates a JWT-token.
-        /// </summary>
-        /// <param name="claims">Contains user information for JWT-body.</param>
-        /// <returns>string JWT-token.</returns>
-        private string CreateJWTToken(ClaimsIdentity claims)
-        {
-            // Create a JWT-token.
-            var jwt = new JwtSecurityToken(
-                issuer: AuthOptions.ISSUER,
-                    audience: AuthOptions.AUDIENCE,
-                    notBefore: DateTime.Now,
-                    claims: claims.Claims,
-                    expires: DateTime.Now.Add(TimeSpan.FromSeconds(10)),
-                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-            return encodedJwt;
-        }
-        /// <summary>
-        /// Gets user claims.
-        /// </summary>
-        /// <param name="model">Contains user login and password. 
-        /// Come from frontend part.</param>
-        /// <returns>ClaimsIdentity, contained user login and his role.</returns>
-        private ClaimsIdentity GetClaims(LoginModel model)
-        {
-            var user = _dbContext.Users
-                .Include(r => r.Role)
-                .FirstOrDefault(x => x.Login == model.Login);
-            if (user != null)
-            {
-                if (_passwordHasher.IsPasswordMatchingHash(model.Password, user.Password))
-                {
-                    var claims = new List<Claim>
-                {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login),
-                    new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.Name),
-                };
-                    var claimsIdentity = new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
-                        ClaimsIdentity.DefaultRoleClaimType);
-                    return claimsIdentity;
-                }
-            }
-            return null;
         }
     }
 }

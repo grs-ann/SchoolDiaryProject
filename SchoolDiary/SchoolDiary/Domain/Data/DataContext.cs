@@ -28,7 +28,7 @@ namespace SchoolDiary.Domain.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var adminRole = new Role { Id = 1, Name = "admin" };
-            var userRole = new Role { Id = 2, Name = "user" };
+            var studentRole = new Role { Id = 2, Name = "student" };
             var teacherRole = new Role { Id = 3, Name = "teacher" };
             modelBuilder.Entity<Class>().HasData(new Class[]
             {
@@ -61,7 +61,7 @@ namespace SchoolDiary.Domain.Data
                     Id = 2,
                     Login = "grsann",
                     Password = ph.GenerateHash("123456"),
-                    RoleId = userRole.Id,
+                    RoleId = studentRole.Id,
                     Firstname = "Анна",
                     Lastname = "Герасимова",
                     Patronymic = "Сергеевна",
@@ -79,7 +79,7 @@ namespace SchoolDiary.Domain.Data
                     Phone = "+7-927-748-99-99"
                 };
                 modelBuilder.Entity<User>().HasData(new User[] { adminUser, defaultUser, teacherUser });
-                modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole, teacherRole });
+                modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, studentRole, teacherRole });
             }
             modelBuilder.Entity<Subject>().HasData(new Subject[]
             {

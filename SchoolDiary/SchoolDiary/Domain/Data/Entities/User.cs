@@ -13,6 +13,10 @@ namespace SchoolDiary.Domain.Data.Entities
         public string Login { get; set; }
         public string Password { get; set; }
         public string Phone { get; set; }
+
+        // User token.
+        public string Token { get; set; }
+
         public int RoleId { get; set; }
         // User role.
         public Role Role{ get; set; }

@@ -66,18 +66,6 @@ namespace SchoolDiary.Domain.Services
                 };
                 var token = tokenHandler.CreateToken(tokenDescriptor);
                 user.Token = tokenHandler.WriteToken(token);
-                /*var test_user = new TempUser
-                {
-                    FirstName = "Анна",
-                    Id = 1,
-                    LastName = "Герасимова",
-                    Role = "Admin",
-                    Password = null,
-                    Token = tokenHandler.WriteToken(token),
-                    Username = "grs_ann",
-                    ROFL = "34123hflas"
-                };*/
-                //return test_user;
                 return user.WithoutPassword();
             }
             return null;

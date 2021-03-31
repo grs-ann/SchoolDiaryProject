@@ -29,6 +29,9 @@ namespace SchoolDiary
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Configure strongly typed settings objects.
+            var appSettingsSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
             // Adding project services.
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IPasswordHasher, PasswordHasher>();
@@ -99,7 +102,7 @@ namespace SchoolDiary
                 endpoints.MapControllers();
             });
             
-            app.UseSpa(spa =>
+            /*app.UseSpa(spa =>
             {
                 if (env.IsDevelopment())
                 {
@@ -113,7 +116,7 @@ namespace SchoolDiary
                 {
                     spa.UseVueCli(npmScript: "serve");
                 }
-            });
+            });*/
         }
     }
 }

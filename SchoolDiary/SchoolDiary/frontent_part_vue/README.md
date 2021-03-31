@@ -1,24 +1,5 @@
-# frontent_part_vue
+# vue-role-based-authorization-example
 
-## Project setup
-```
-npm install
-```
+Vue.js - Role Based Authorization Tutorial & Example
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+To see a demo and further details go to http://jasonwatmore.com/post/2019/03/08/vuejs-role-based-authorization-tutorial-with-example

@@ -1,18 +1,18 @@
 <template>
     <div>
         <div class="alert alert-info">
-            <strong>Normal User</strong> - U: user P: user<br />
-            <strong>Administrator</strong> - U: admin P: admin
+            <strong>Добро пожаловать!</strong><br/>
+            <p>Для продолжения работы необходима авторизация.<p/>
         </div>
         <h2>Login</h2>
         <form @submit.prevent="onSubmit">
             <div class="form-group">
-                <label for="login">login</label>
+                <label for="login">Логин</label>
                 <input type="text" v-model.trim="$v.login.$model" name="login" class="form-control" :class="{ 'is-invalid': submitted && $v.login.$error }" />
                 <div v-if="submitted && !$v.login.required" class="invalid-feedback">login is required</div>
             </div>
             <div class="form-group">
-                <label htmlFor="password">Password</label>
+                <label htmlFor="password">Пароль</label>
                 <input type="password" v-model.trim="$v.password.$model" name="password" class="form-control" :class="{ 'is-invalid': submitted && $v.password.$error }" />
                 <div v-if="submitted && !$v.password.required" class="invalid-feedback">Password is required</div>
             </div>

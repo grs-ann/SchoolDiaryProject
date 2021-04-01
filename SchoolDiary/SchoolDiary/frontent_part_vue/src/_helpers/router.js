@@ -6,6 +6,10 @@ import { Role } from '@/_helpers';
 import HomePage from '@/home/HomePage';
 import AdminPage from '@/admin/AdminPage';
 import LoginPage from '@/login/LoginPage';
+import EditStudents from '@/admin/EditStudents';
+import EditTeachers from '@/admin/EditTeachers';
+import EditSchedule from '@/admin/EditSchedule';
+import EditClasses from '@/admin/EditClasses';
 
 Vue.use(Router);
 
@@ -26,6 +30,27 @@ export const router = new Router({
             path: '/login', 
             component: LoginPage 
         },
+        {
+            path: '/editteachers',
+            component: EditTeachers,
+            meta: { authorize: [Role.Admin] }
+        },
+        {
+            path: '/editstudents',
+            component: EditStudents,
+            meta: { authorize: [Role.Admin] }
+        },
+        {
+            path: '/editschedule',
+            component: EditSchedule,
+            meta: { authorize: [Role.Admin] }
+        },
+        {
+            path: '/editclasses',
+            component: EditClasses,
+            meta: { authorize: [Role.Admin] }
+        },
+
 
         // otherwise redirect to home
         { path: '*', redirect: '/' }
@@ -44,7 +69,7 @@ router.beforeEach((to, from, next) => {
         }
 
         // check if route is restricted by role
-        if (authorize.length && !authorize.includes(currentUser.role)) {
+        if (authorize.length && !authorize.includes(currentUser.role.name)) {
             // role not authorised so redirect to home page
             return next({ path: '/' });
         }

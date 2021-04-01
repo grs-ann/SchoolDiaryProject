@@ -1,15 +1,9 @@
 <template>
-    <div>
-        <h1>Home</h1>
-        <p>You're logged in with Vue.js & JWT!!</p>
+    <div class="home-page">
+        <h1>School diary home page</h1>
+        <p>Добро пожаловать, <strong>{{ currentUser.firstname }}</strong></p>
         <p>Your role is: <strong>{{currentUser.role.name}}</strong>.</p>
         <p>This page can be accessed by all authenticated users.</p>
-        <div>
-            Current user from secure api end point:
-            <ul v-if="userFromApi">
-                <li>{{userFromApi.firstName}} {{userFromApi.lastName}}</li>
-            </ul>
-        </div>
     </div>
 </template>
 
@@ -28,3 +22,4 @@ export default {
     }
 };
 </script>
+

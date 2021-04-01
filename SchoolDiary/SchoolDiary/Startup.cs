@@ -14,6 +14,7 @@ using SchoolDiary.Helpers.Interfaces;
 using Microsoft.AspNetCore.CookiePolicy;
 using System.Threading.Tasks;
 using VueCliMiddleware;
+using System.Text;
 
 namespace SchoolDiary
 {
@@ -32,6 +33,8 @@ namespace SchoolDiary
             // Configure strongly typed settings objects.
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
+            var appSettings = appSettingsSection.Get<AppSettings>();
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
             // Adding project services.
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IPasswordHasher, PasswordHasher>();
@@ -45,25 +48,21 @@ namespace SchoolDiary
                 options.UseSqlServer(Configuration
                     .GetConnectionString("DefaultConnection")));
             // Authentication settins.
-            services.AddAuthentication("OAuth")
-                .AddJwtBearer("OAuth", config =>
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(x =>
                 {
-                    config.Events = new JwtBearerEvents
+                    x.RequireHttpsMetadata = false;
+                    x.SaveToken = true;
+                    x.TokenValidationParameters = new TokenValidationParameters
                     {
-                        OnMessageReceived = context =>
-                        {
-                            if (context.Request.Cookies.ContainsKey("refregeratorprice"))
-                            {
-                                context.Token = context.Request.Cookies["refregeratorprice"];
-                            }
-                            return Task.CompletedTask;
-                        }
-                    };
-                    config.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidIssuer = AuthOptions.ISSUER,
-                        ValidAudience = AuthOptions.AUDIENCE,
-                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey()
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
                     };
                 });
             services.AddCors();
@@ -101,8 +100,8 @@ namespace SchoolDiary
             {
                 endpoints.MapControllers();
             });
-            
-            /*app.UseSpa(spa =>
+
+            app.UseSpa(spa =>
             {
                 if (env.IsDevelopment())
                 {
@@ -114,9 +113,9 @@ namespace SchoolDiary
                 }
                 if (env.IsDevelopment())
                 {
-                    spa.UseVueCli(npmScript: "serve");
+                    spa.UseVueCli(npmScript: "start");
                 }
-            });*/
+            });
         }
     }
 }

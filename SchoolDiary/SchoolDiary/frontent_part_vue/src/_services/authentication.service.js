@@ -12,7 +12,6 @@ export const authenticationService = {
     get currentUserValue () { return currentUserSubject.value }
 };
 
-// Role, Users
 function login(login, password) {
     return fetch(`https://localhost:44303/api/account/authenticate`, requestOptions.post({ login, password }))
         .then(handleResponse)

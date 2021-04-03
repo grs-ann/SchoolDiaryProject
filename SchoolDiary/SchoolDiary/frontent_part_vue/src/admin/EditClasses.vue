@@ -2,9 +2,14 @@
     <div class="class-page">
         <p>Редактирование классов</p>
         <div>
+            <div>
+                <input type="text"/>
+                <button v-on:click="">Добавить</button>
+            </div>
             <ul v-if="this.classes.length">
-                <li v-for="cl in classes" :key="cl.id">
+                <li v-for="(cl, index) in classes" :key="cl.id">
                     {{cl.name}}
+                    <button v-on:click="getClass(index, cl)">Изменить</button>
                 </li>
             </ul>
         </div>
@@ -15,12 +20,15 @@
 
 <script>
 import { authenticationService, classService } from '@/_services';
-
 export default {
     data () {
         return {
             user: authenticationService.currentUserValue,
-            classes: []
+            classes: [],
+            concreteClass: {
+                id: "",
+                name: ""
+            },
         };
     },
     created () {
@@ -31,6 +39,17 @@ export default {
         logout () {
             authenticationService.logout();
             router.push('/login');
+        },
+        getClass(index, cl) {
+            this.concreteClass.id = index + 1;
+            this.concreteClass.name = cl.name;
+            console.log(this.concreteClass.id + " " + this.concreteClass.name);
+            classService.GetClass(this.concreteClass)
+                .then(concreteClassResult => this.concreteClassResult = this.concreteClassResult);
+            
+        }
+        addNewClass(res) {
+            //classService.AddNewClass(res)
         }
     }
 };

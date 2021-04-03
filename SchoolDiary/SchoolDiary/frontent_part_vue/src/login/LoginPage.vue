@@ -1,18 +1,18 @@
 <template>
     <div>
         <div class="alert alert-info">
-            <strong>Добро пожаловать!</strong><br/>
-            <p>Для продолжения работы необходима авторизация.<p/>
+            <strong>Normal User</strong> - U: user P: user<br />
+            <strong>Administrator</strong> - U: admin P: admin
         </div>
         <h2>Login</h2>
         <form @submit.prevent="onSubmit">
             <div class="form-group">
-                <label for="login">Логин</label>
-                <input type="text" v-model.trim="$v.login.$model" name="login" class="form-control" :class="{ 'is-invalid': submitted && $v.login.$error }" />
-                <div v-if="submitted && !$v.login.required" class="invalid-feedback">login is required</div>
+                <label for="username">Username</label>
+                <input type="text" v-model.trim="$v.username.$model" name="username" class="form-control" :class="{ 'is-invalid': submitted && $v.username.$error }" />
+                <div v-if="submitted && !$v.username.required" class="invalid-feedback">Username is required</div>
             </div>
             <div class="form-group">
-                <label htmlFor="password">Пароль</label>
+                <label htmlFor="password">Password</label>
                 <input type="password" v-model.trim="$v.password.$model" name="password" class="form-control" :class="{ 'is-invalid': submitted && $v.password.$error }" />
                 <div v-if="submitted && !$v.password.required" class="invalid-feedback">Password is required</div>
             </div>
@@ -36,7 +36,7 @@ import { authenticationService } from '@/_services';
 export default {
     data () {
         return {
-            login: '',
+            username: '',
             password: '',
             submitted: false,
             loading: false,
@@ -45,7 +45,7 @@ export default {
         };
     },
     validations: {
-      login: { required },
+      username: { required },
       password: { required }
     },
     created () {
@@ -68,7 +68,7 @@ export default {
             }
 
             this.loading = true;
-            authenticationService.login(this.login, this.password)
+            authenticationService.login(this.username, this.password)
                 .then(
                     user => router.push(this.returnUrl),
                     error => {

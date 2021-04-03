@@ -1,9 +1,10 @@
 <template>
-    <div class="home-page">
-        <h1>School diary home page</h1>
-        <p>Добро пожаловать, <strong>{{ currentUser.firstname }}</strong></p>
-        <p>Your role is: <strong>{{currentUser.role.name}}</strong>.</p>
-        <p>This page can be accessed by all authenticated users.</p>
+    <div>
+        <p>Добро пожаловать, {{ currentUser.firstname }} {{ currentUser.lastname }}</p>
+        <p>Статус: <strong>{{currentUser.role.name}}</strong>.</p>
+        <div>
+            
+        </div>
     </div>
 </template>
 
@@ -22,4 +23,3 @@ export default {
     }
 };
 </script>
-

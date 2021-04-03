@@ -1,10 +1,11 @@
 import { authenticationService } from '@/_services';
 
 export const requestOptions = {
-    get() {
+    get(body) {
         return {
             method: 'GET',
-            ...headers()
+            ...headers(),
+            body: JSON.stringify(body)
         };
     },
     post(body) {
@@ -42,7 +43,7 @@ function headers() {
     return {
         headers: {
             ...authHeader,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         }
     }
 }

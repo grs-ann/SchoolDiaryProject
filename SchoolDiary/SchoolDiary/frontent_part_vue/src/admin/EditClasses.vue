@@ -4,7 +4,7 @@
         <div>
             <div>
                 <input type="text"/>
-                <button v-on:click="">Добавить</button>
+                <button>Добавить</button>
             </div>
             <ul v-if="this.classes.length">
                 <li v-for="(cl, index) in classes" :key="cl.id">
@@ -20,6 +20,7 @@
 
 <script>
 import { authenticationService, classService } from '@/_services';
+
 export default {
     data () {
         return {
@@ -47,7 +48,7 @@ export default {
             classService.GetClass(this.concreteClass)
                 .then(concreteClassResult => this.concreteClassResult = this.concreteClassResult);
             
-        }
+        },
         addNewClass(res) {
             //classService.AddNewClass(res)
         }

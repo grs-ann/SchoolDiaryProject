@@ -65,7 +65,9 @@ namespace SchoolDiary.Domain.Services
         /// <returns>All students.</returns>
         public IEnumerable<Student> GetAll()
         {
-            var students = _dbContext.Students;
+            var students = _dbContext.Students
+                .Include(c => c.Class)
+                .Include(x => x.User);
             return students;
         }
         /// <summary>

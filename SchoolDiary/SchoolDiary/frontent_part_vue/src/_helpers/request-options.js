@@ -1,12 +1,11 @@
 import { authenticationService } from '@/_services';
 
 export const requestOptions = {
-    aspRoute: 'https://localhost:5001',
-    get(body) {
+    aspRoute: 'https://localhost:44303',
+    get() {
         return {
             method: 'GET',
             ...headers(),
-            body: JSON.stringify(body)
         };
     },
     post(body) {

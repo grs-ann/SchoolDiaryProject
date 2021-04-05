@@ -41,5 +41,16 @@ namespace SchoolDiary.Controllers
             }
             return BadRequest(ModelState);
         }
+        [HttpGet("GetAllStudents")]
+        public IActionResult GetAllStudents()
+        {
+            var students = _studentsEditService.GetAll();
+            if (students == null)
+            {
+                ModelState.AddModelError("Error", "Не найдено ни одного студента.");
+                return BadRequest(ModelState);
+            }
+            return Ok(students);
+        }
     }
 }

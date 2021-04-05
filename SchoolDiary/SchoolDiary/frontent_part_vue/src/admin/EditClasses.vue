@@ -33,7 +33,6 @@ export default {
         };
     },
     created () {
-        //userService.getAll().then(users => this.users = users);
         classService.GetAllClasses().then(classes => this.classes = classes);
     },
     methods: {

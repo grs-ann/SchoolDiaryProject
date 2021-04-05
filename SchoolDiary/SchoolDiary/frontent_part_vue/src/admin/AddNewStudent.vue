@@ -1,44 +1,57 @@
 <template>
-    <div>
-        <p1>Добавление нового ученика</p1>
-        <form @submit.prevent="onSubmit">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" v-model.trim="$v.username.$model" name="username" class="form-control" :class="{ 'is-invalid': submitted && $v.username.$error }" />
-                <div v-if="submitted && !$v.username.required" class="invalid-feedback">Username is required</div>
-            </div>
-            <div class="form-group">
-                <label htmlFor="password">Password</label>
-                <input type="password" v-model.trim="$v.password.$model" name="password" class="form-control" :class="{ 'is-invalid': submitted && $v.password.$error }" />
-                <div v-if="submitted && !$v.password.required" class="invalid-feedback">Password is required</div>
-            </div>
-            <div class="form-group">
-                <button class="btn btn-primary" :disabled="loading">
-                    <span class="spinner-border spinner-border-sm" v-show="loading"></span>
-                    <span>Login</span>
-                </button>
-            </div>
-            <div v-if="error" class="alert alert-danger">{{error}}</div>
+    <div class="add-new-student">
+        <p>Добавление нового ученика</p>
+        <form class="add-new-student-form">
+            <input type="text" placeholder="Логин" v-model="newUserData.login"><br/>
+            <input type="password" placeholder="Пароль" v-model="newUserData.password"><br/>
+            <input type="text" placeholder="Имя" v-model="newUserData.firstname"><br/>
+            <input type="text" placeholder="Фамилия" v-model="newUserData.lastname"><br/>
+            <input type="text" placeholder="Отчество" v-model="newUserData.patronymic"><br/>
+            <input type="text" placeholder="Номер телефона" v-model="newUserData.phone"><br/>
+            <select id="classId" v-model="selectedClassId">
+                <option :value="cl.value" v-for="(cl, index) in classes" :key="index">
+                    {{ cl.name }}
+                </option>
+            </select><br/>
+            <button type="button" @click="addNewStudent">Добавить</button>
         </form>
     </div>
 </template>
 
+
 <script>
+import { classService, userService } from '@/_services';
+
+
 export default {
-    data () {
+    name: "AddNewStudent",
+    
+    data() {
         return {
-            login: '',
-            password: '',
-            firstname: '',
-            lastname: '',
-            patronymic: '',
-            phone: '',
-            roleid: ''
-        };
+            selectedClassId:'',
+            classes: [],
+            newUserData: {
+                login: '',
+                password: '',
+                firstname: '',
+                lastname: '',
+                patronymic: '',
+                phone: '',
+                roleId: 2,
+                classId: ''
+            }
+        }
     },
-    validations: {
-      username: { required },
-      password: { required }
+    created () {
+        classService.GetAllClasses().then(res => this.classes = res);
     },
+    methods: {
+        addNewStudent() {
+            console.log(this.selectedClassId)
+            this.newUserData.classId = this.selectedClassId;
+            userService.addNewStudent(this.newUserData);
+        }
+    }
 }
+
 </script>

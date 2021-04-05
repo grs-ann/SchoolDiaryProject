@@ -30,13 +30,10 @@ namespace SchoolDiary.Domain.Data
             var adminRole = new Role { Id = 1, Name = "admin" };
             var studentRole = new Role { Id = 2, Name = "student" };
             var teacherRole = new Role { Id = 3, Name = "teacher" };
+            var studentClass = new Class { Id = 1, Name = "7Г" };
             modelBuilder.Entity<Class>().HasData(new Class[]
             {
-                new Class
-                {
-                    Id = 1,
-                    Name = "7Г"
-                },
+                studentClass,
                 new Class
                 {
                     Id = 2,
@@ -80,6 +77,7 @@ namespace SchoolDiary.Domain.Data
                 };
                 modelBuilder.Entity<User>().HasData(new User[] { adminUser, defaultUser, teacherUser });
                 modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, studentRole, teacherRole });
+                modelBuilder.Entity<Student>().HasData(new Student { Id = 1, UserId = defaultUser.Id, ClassId= studentClass.Id });
             }
             modelBuilder.Entity<Subject>().HasData(new Subject[]
             {

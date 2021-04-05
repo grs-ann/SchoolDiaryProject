@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace SchoolDiary.Domain.Data.Entities
@@ -11,6 +12,7 @@ namespace SchoolDiary.Domain.Data.Entities
         public string Lastname { get; set; }
         public string Patronymic { get; set; }
         public string Login { get; set; }
+        [JsonIgnore]
         public string Password { get; set; }
         public string Phone { get; set; }
 
@@ -20,8 +22,9 @@ namespace SchoolDiary.Domain.Data.Entities
         public int RoleId { get; set; }
         // User role.
         public Role Role{ get; set; }
-
+        [JsonIgnore]
         public Student Student { get; set; }
+        [JsonIgnore]
         public Teacher Teacher { get; set; }
     }
 }

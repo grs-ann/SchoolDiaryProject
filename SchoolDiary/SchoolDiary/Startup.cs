@@ -77,7 +77,12 @@ namespace SchoolDiary
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            // For correctly working with vue front.
+            // Allowing cross-domain queries!
+            app.UseCors(c => c
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -90,12 +95,6 @@ namespace SchoolDiary
             });
             app.UseAuthentication();
             app.UseAuthorization();
-            // For correctly working with vue front.
-            // Allowing cross-domain queries!
-            app.UseCors(c => c
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader());
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

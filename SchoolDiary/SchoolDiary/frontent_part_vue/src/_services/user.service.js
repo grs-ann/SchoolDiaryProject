@@ -5,7 +5,7 @@ export const userService = {
     getAll,
     getById,
     getAllStudents,
-    addNewStudent
+    registerNewStudent
 };
 
 
@@ -14,8 +14,8 @@ function getAllStudents() {
     return fetch(`${requestOptions.aspRoute}/api/studentsedit/getallstudents`, requestOptions.get())
         .then(handleResponse);
 }
-function addNewStudent(registerModel) {
-    return fetch(`${requestOptions.aspRoute}/api/account/RegisterStudent`, requestOptions.post(registerModel))
+function registerNewStudent(studentData) {
+    return fetch(`${requestOptions.aspRoute}/api/account/RegisterStudent`, requestOptions.post(studentData))
         .then(handleResponse);
 }
 

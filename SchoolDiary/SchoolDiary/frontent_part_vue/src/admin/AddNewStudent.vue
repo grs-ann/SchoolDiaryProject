@@ -1,7 +1,7 @@
 <template>
     <div class="add-new-student">
         <p>Добавление нового ученика</p>
-        <form class="add-new-student-form">
+        <form class="add-new-student-form" @submit.prevent="addNewStudent">
             <input type="text" placeholder="Логин" v-model="newUserData.login"><br/>
             <input type="password" placeholder="Пароль" v-model="newUserData.password"><br/>
             <input type="text" placeholder="Имя" v-model="newUserData.firstname"><br/>
@@ -13,7 +13,7 @@
                     {{ cl.name }}
                 </option>
             </select><br/>
-            <button type="button" @click="addNewStudent">Добавить</button>
+            <button>Добавить</button>
         </form>
     </div>
 </template>
@@ -24,7 +24,7 @@ import { classService, userService } from '@/_services';
 
 
 export default {
-    name: "AddNewStudent",
+    name: "AddingNewStudent",
     
     data() {
         return {
@@ -46,10 +46,13 @@ export default {
         classService.GetAllClasses().then(res => this.classes = res);
     },
     methods: {
+        gg() {
+            console.log('gg');
+        },
         addNewStudent() {
-            console.log(this.selectedClassId)
+            console.log(this.newUserData)
             this.newUserData.classId = this.selectedClassId;
-            userService.addNewStudent(this.newUserData);
+            userService.registerNewStudent(this.newUserData);
         }
     }
 }

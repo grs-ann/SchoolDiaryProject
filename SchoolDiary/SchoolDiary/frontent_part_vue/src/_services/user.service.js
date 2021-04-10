@@ -5,7 +5,8 @@ export const userService = {
     getAll,
     getById,
     getAllStudents,
-    registerNewStudent
+    registerNewStudent,
+    deleteStudentById
 };
 
 
@@ -16,6 +17,10 @@ function getAllStudents() {
 }
 function registerNewStudent(studentData) {
     return fetch(`${requestOptions.aspRoute}/api/account/RegisterStudent`, requestOptions.post(studentData))
+        .then(handleResponse);
+}
+function deleteStudentById(id) {
+    return fetch(`${requestOptions.aspRoute}/api/account/DeleteUser`, requestOptions.delete(id))
         .then(handleResponse);
 }
 

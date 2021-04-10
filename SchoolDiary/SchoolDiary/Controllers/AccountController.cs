@@ -84,5 +84,19 @@ namespace SchoolDiary.Controllers
             }
             return BadRequest(ModelState);
         }
+        [HttpDelete("DeleteUser")]
+        public async Task<IActionResult> DeleteUser([FromBody] int id)
+        {
+            if (id != 0)
+            {
+                var deletedUser = await _accountService.DeleteUserAsync(id);
+                if (deletedUser != null)
+                {
+                    return Ok();
+                }
+            }
+            ModelState.AddModelError("Error", "Невозможно удалить пользователя, так как его не существует.");
+            return BadRequest(ModelState);
+        }
     }
 }

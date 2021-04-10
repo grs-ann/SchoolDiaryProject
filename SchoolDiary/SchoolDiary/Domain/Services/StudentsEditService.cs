@@ -47,17 +47,12 @@ namespace SchoolDiary.Domain.Services
             }
             return null;
         }
-        /// <summary>
-        /// Deletes student by Id.
-        /// </summary>
-        /// <param name="id">Student Id.</param>
-        /// <returns>Deleted Student.</returns>
-        public async Task<Student> DeleteByIdAsync(int id)
+
+        public Task<Student> DeleteByIdAsync(int id)
         {
-            var student = await _dbContext.Students
-                .FirstOrDefaultAsync(t => t.Id == id);
-            return student;
+            throw new NotImplementedException();
         }
+
         /// <summary>
         /// Gets all students from database
         /// 'Students' table.

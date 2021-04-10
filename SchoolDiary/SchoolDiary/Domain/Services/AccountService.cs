@@ -27,6 +27,7 @@ namespace SchoolDiary.Domain.Services
         User Authenticate(string login, string password);
         Task<User> RegisterStudentAsync(RegisterStudentModel model);
         Task<User> RegisterTeacherAsync(RegisterTeacherModel model);
+        Task<User> DeleteUserAsync(int id);
     }
     /// <summary>
     /// This service contains a set of methods 
@@ -70,6 +71,16 @@ namespace SchoolDiary.Domain.Services
             }
             return null;
         }
+
+        public async Task<User> DeleteUserAsync(int id)
+        {
+            var userToDelete = await _dbContext.Users
+                .FirstOrDefaultAsync(u => u.Id == id);
+            _dbContext.Users.Remove(userToDelete);
+            await _dbContext.SaveChangesAsync();
+            return userToDelete;
+        }
+
         /// <summary>
         /// Register a new student.
         /// </summary>

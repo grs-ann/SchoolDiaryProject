@@ -9,7 +9,10 @@ export function handleResponse(response) {
                 authenticationService.logout();
                 location.reload(true);
             }
-
+            if ([400].indexOf(response.status) !== -1) {
+                const error = (data && data.errors);
+                return Promise.reject(error);
+            }
             const error = (data && data.message) || response.statusText;
             return Promise.reject(error);
         }

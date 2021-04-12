@@ -23,7 +23,7 @@
 
 <script>
 import { classService, userService } from '@/_services';
-
+import { router } from '@/_helpers';
 
 export default {
     name: "AddingNewStudent",
@@ -32,16 +32,27 @@ export default {
             selectedClassId: '',
             classes: [],
             newUserData: {
-                login: '',
+                login: 'g',
                 password: '',
                 firstname: '',
                 lastname: '',
                 patronymic: '',
                 phone: '',
                 roleId: 2,
-                classId: ''
+                classId: '',
+                submitted: false
             }
         }
+    },
+    validations: {
+        login: '',
+        password: '',
+        firstname: '',
+        lastname: '',
+        patronymic: '',
+        phone: '',
+        roleId: '',
+        classId: '',
     },
     created () {
         classService.GetAllClasses().then(res => this.classes = res);
@@ -51,9 +62,12 @@ export default {
      */
     methods: {
         addNewStudent() {
+            this.newUserData.submitted = true;
             if (this.selectedClassId !== "") {
                 this.newUserData.classId = this.selectedClassId;
-                userService.registerNewStudent(this.newUserData);
+                userService.registerNewStudent(this.newUserData)
+                    .then(result => router.push('/editstudents'))
+                    .catch(err => console.log(err));
             }
         }
     }

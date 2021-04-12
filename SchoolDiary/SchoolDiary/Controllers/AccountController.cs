@@ -49,7 +49,7 @@ namespace SchoolDiary.Controllers
         /// come from the frontent part.</param>
         /// <returns>Result of new student register.</returns>
         [Authorize(Roles = "admin")]
-        [HttpPost("RegisterStudent")]
+        [HttpPost(nameof(RegisterStudent))]
         public async Task<IActionResult> RegisterStudent(RegisterStudentModel model)
         {
             if (_dbContext.Users.Any(u => u.Login == model.Login))

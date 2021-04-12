@@ -69,7 +69,7 @@ namespace SchoolDiary
             // NewtonsoftJson allows correctly parse values from JSON objects.
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings
                     .ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-            services.AddSpaStaticFiles(options => options.RootPath = "ClientApp");
+            services.AddSpaStaticFiles(options => options.RootPath = "frontent_part_vue");
 
         }
 

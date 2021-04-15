@@ -21,7 +21,7 @@ function registerNewStudent(studentData) {
 }
 function deleteStudentById(id) {
     return fetch(`${requestOptions.aspRoute}/api/account/DeleteUser`, requestOptions.delete(id))
-        .then(handleResponse);
+        .then(handleResponse)
 }
 
 

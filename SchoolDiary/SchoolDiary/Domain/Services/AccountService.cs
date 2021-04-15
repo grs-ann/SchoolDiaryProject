@@ -1,15 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SchoolDiary.Domain.Data;
 using SchoolDiary.Domain.Data.Entities;
 using SchoolDiary.Domain.Models.Authentication;
-using SchoolDiary.Domain.Services.Interfaces;
 using SchoolDiary.Helpers;
 using SchoolDiary.Helpers.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;

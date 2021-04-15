@@ -61,7 +61,7 @@ namespace SchoolDiary.Controllers
                 await _accountService.RegisterStudentAsync(model);
                 return Ok();
             }
-            return BadRequest(ModelState);
+            return BadRequest(Json(ModelState));
         }
         /// <summary>
         /// Registers new teacher.

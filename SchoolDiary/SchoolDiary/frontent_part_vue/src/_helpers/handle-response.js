@@ -10,7 +10,7 @@ export function handleResponse(response) {
                 location.reload(true);
             }
             if ([400].indexOf(response.status) !== -1) {
-                const error = (data && data.errors);
+                const error = data.errors;
                 return Promise.reject(error);
             }
             const error = (data && data.message) || response.statusText;

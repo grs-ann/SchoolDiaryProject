@@ -2,6 +2,7 @@
     <div class="add-new-student">
         <p>Добавление нового ученика</p>
         <form class="add-new-student-form" @submit.prevent="addNewStudent">
+            <p v-if="newUserData.submitted">{{ validations.login }}</p>
             <input type="text" placeholder="Логин" v-model="newUserData.login"><br/>
             <input type="password" placeholder="Пароль" v-model="newUserData.password"><br/>
             <input type="text" placeholder="Имя" v-model="newUserData.firstname"><br/>
@@ -32,7 +33,7 @@ export default {
             selectedClassId: '',
             classes: [],
             newUserData: {
-                login: 'g',
+                login: '',
                 password: '',
                 firstname: '',
                 lastname: '',
@@ -41,18 +42,19 @@ export default {
                 roleId: 2,
                 classId: '',
                 submitted: false
-            }
+            },
+            validations: {
+                login: '',
+                password: '',
+                firstname: '',
+                lastname: '',
+                patronymic: '',
+                phone: '',
+                roleId: '',
+                classId: '',
+            },
+            validationErrors: ''
         }
-    },
-    validations: {
-        login: '',
-        password: '',
-        firstname: '',
-        lastname: '',
-        patronymic: '',
-        phone: '',
-        roleId: '',
-        classId: '',
     },
     created () {
         classService.GetAllClasses().then(res => this.classes = res);
@@ -63,12 +65,30 @@ export default {
     methods: {
         addNewStudent() {
             this.newUserData.submitted = true;
+            let error = [];
             if (this.selectedClassId !== "") {
                 this.newUserData.classId = this.selectedClassId;
                 userService.registerNewStudent(this.newUserData)
                     .then(result => router.push('/editstudents'))
-                    .catch(err => console.log(err));
+                    // .catch(function(err) {
+                    //     console.log(this.newUserData);
+                    //     for(let key in err) {
+                    //         let validationKey = key.toLowerCase();
+                    //         for(let res of err[key]) {
+
+                    //         }
+                    //     }
+                    // });
+                    .catch(err => {
+                        for(let key in err) {
+                            let validationKey = key.toLowerCase();
+                            for(let res of err[key]) {
+                                this.validations[validationKey] = res;
+                            }
+                        }
+                    })
             }
+            console.log(this.validations);
         }
     }
 }

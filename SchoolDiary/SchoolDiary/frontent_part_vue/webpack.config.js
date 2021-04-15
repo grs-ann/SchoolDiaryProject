@@ -4,6 +4,16 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin')
 //import { requestOptions } from '@/_helpers';
 
 module.exports = {
+    //
+    // entry: {
+    //     "app": "@/app/app.vue"
+    // },
+    // output: {
+    //     path: path.join(__dirname, 'dist'),
+    //     filename: "[name].js",
+    //     sourceMapFilename: "[name].js.map"
+    // },
+    // devtool: "source-map",
     mode: 'development',
     resolve: {
         extensions: ['.js', '.vue']

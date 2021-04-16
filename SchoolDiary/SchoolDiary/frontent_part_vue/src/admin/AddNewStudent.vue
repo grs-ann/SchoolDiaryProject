@@ -1,21 +1,28 @@
 <template>
-    <div class="add-new-student">
+    <div v-bind:style="styleForm">
         <p>Добавление нового ученика</p>
-        <form class="add-new-student-form" @submit.prevent="addNewStudent">
-            <p v-if="newUserData.submitted">{{ validations.login }}</p>
-            <input type="text" placeholder="Логин" v-model="newUserData.login"><br/>
-            <input type="password" placeholder="Пароль" v-model="newUserData.password"><br/>
-            <input type="text" placeholder="Имя" v-model="newUserData.firstname"><br/>
-            <input type="text" placeholder="Фамилия" v-model="newUserData.lastname"><br/>
-            <input type="text" placeholder="Отчество" v-model="newUserData.patronymic"><br/>
-            <input type="text" placeholder="Номер телефона" v-model="newUserData.phone"><br/>
-            <select v-model="selectedClassId">
-                <option disabled value="">Выберите один из вариантов</option>
-                <option v-for="option in classes" v-bind:value="option.id">
-                    {{ option.name }}
-                </option>
-            </select>
-            <span>Выбрано: {{ this.selectedClassId }}</span><br/>
+        <form @submit.prevent="addNewStudent">
+            <div v-bind:style="styleObject">
+                <p v-if="newUserData.submitted">{{ validations.login }}</p>
+                <input type="text" placeholder="Логин" v-model="newUserData.login"><br/>
+                <p v-if="newUserData.submitted">{{ validations.password }}</p>
+                <input type="password" placeholder="Пароль" v-model="newUserData.password"><br/>
+                <p v-if="newUserData.submitted">{{ validations.firstname }}</p>
+                <input type="text" placeholder="Имя" v-model="newUserData.firstname"><br/>
+                <p v-if="newUserData.submitted">{{ validations.lastname }}</p>
+                <input type="text" placeholder="Фамилия" v-model="newUserData.lastname"><br/>
+                <p v-if="newUserData.submitted">{{ validations.patronymic }}</p>
+                <input type="text" placeholder="Отчество" v-model="newUserData.patronymic"><br/>
+                <p v-if="newUserData.submitted">{{ validations.phone }}</p>
+                <input type="text" placeholder="Номер телефона" v-model="newUserData.phone"><br/>
+                <p v-if="newUserData.submitted && newUserData.classId < 1">{{ validations.classId }}</p>
+                <select v-model="newUserData.classId">
+                    <option disabled value=''>Выберите один из вариантов</option>
+                    <option v-for="option in classes" v-bind:value="option.id">
+                        {{ option.name }}
+                    </option>
+                </select>
+            </div>
             <button>Добавить</button>
         </form>
     </div>
@@ -30,7 +37,6 @@ export default {
     name: "AddingNewStudent",
     data() {
         return {
-            selectedClassId: '',
             classes: [],
             newUserData: {
                 login: '',
@@ -40,7 +46,7 @@ export default {
                 patronymic: '',
                 phone: '',
                 roleId: 2,
-                classId: '',
+                classId: 0,
                 submitted: false
             },
             validations: {
@@ -53,7 +59,12 @@ export default {
                 roleId: '',
                 classId: '',
             },
-            validationErrors: ''
+            styleObject: {
+                color: 'red'
+            },
+            styleForm: {
+                'text-align': 'center'
+            }
         }
     },
     created () {
@@ -64,32 +75,26 @@ export default {
      */
     methods: {
         addNewStudent() {
-            this.newUserData.submitted = true;
-            let error = [];
-            if (this.selectedClassId !== "") {
-                this.newUserData.classId = this.selectedClassId;
-                userService.registerNewStudent(this.newUserData)
-                    .then(result => router.push('/editstudents'))
-                    // .catch(function(err) {
-                    //     console.log(this.newUserData);
-                    //     for(let key in err) {
-                    //         let validationKey = key.toLowerCase();
-                    //         for(let res of err[key]) {
-
-                    //         }
-                    //     }
-                    // });
-                    .catch(err => {
-                        for(let key in err) {
-                            let validationKey = key.toLowerCase();
-                            for(let res of err[key]) {
-                                this.validations[validationKey] = res;
-                            }
-                        }
-                    })
+            // Refresh validation properties.
+            for(let prop in this.validations) {
+                this.validations[prop] = '';
             }
-            console.log(this.validations);
+            this.newUserData.submitted = true;
+            userService.registerNewStudent(this.newUserData)
+                .then(result => router.push('/editstudents'))
+                .catch(err => {
+                    for(let key in err) {
+                        let validationKey = key.toLowerCase();
+                        for(let res of err[key]) {
+                            this.validations[validationKey] = res;
+                        }
+                        if (this.newUserData.classId == 0) {
+                            this.validations['classId'] = "Пожалуйста, выберите класс для ученика."
+                        }
+                    }
+                })
         }
     }
 }
 </script>
+

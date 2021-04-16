@@ -15,13 +15,13 @@ namespace SchoolDiary.Domain.Models.Authentication
         [MinLength(6, ErrorMessage = "Длина пароля не меньше 6 символов!")]
         public string Password { get; set; }
         [Required]
-        [MinLength(2, ErrorMessage = "Минимальная длина - 2 символа!")]
+        [MinLength(2, ErrorMessage = "Минимальная длина имени - 2 символа!")]
         public string Firstname { get; set; }
         [Required]
-        [MinLength(2, ErrorMessage = "Минимальная длина - 2 символа!")]
+        [MinLength(2, ErrorMessage = "Минимальная длина фамилии - 2 символа!")]
         public string Lastname { get; set; }
         [Required]
-        [MinLength(2, ErrorMessage = "Минимальная длина - 2 символа!")]
+        [MinLength(2, ErrorMessage = "Минимальная длина отчества - 2 символа!")]
         public string Patronymic { get; set; }
         public string Phone { get; set; }
         [Required(ErrorMessage = "Не выбрана роль пользователя!")]

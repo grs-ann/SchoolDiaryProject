@@ -8,7 +8,6 @@
                 <router-link v-if="isAdmin" to="/editclasses" class="nav-item nav-link">Редактировать классы</router-link>
                 <router-link v-if="isAdmin" to="/editteachers" class="nav-item nav-link">Редактировать учителей</router-link>
                 <router-link v-if="isAdmin" to="/editstudents" class="nav-item nav-link">Редактировать учеников</router-link>
-                
                 <a @click="logout" class="nav-item nav-link">Выйти из аккаунта</a>
             </div>
         </nav>
@@ -22,6 +21,7 @@
             </div>
         </div>
     </div>
+    
 </template>
 
 <script>
@@ -32,7 +32,7 @@ export default {
     name: 'app',
     data () {
         return {
-            currentUser: null
+            currentUser: null,
         };
     },
     computed: {

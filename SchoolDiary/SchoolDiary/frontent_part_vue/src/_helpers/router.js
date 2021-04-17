@@ -11,6 +11,7 @@ import EditTeachers from '@/admin/EditTeachers';
 import EditSchedule from '@/admin/EditSchedule';
 import EditClasses from '@/admin/EditClasses';
 import AddNewStudent from '@/admin/AddNewStudent';
+import EditConcreteStudent from '@/admin/EditConcreteStudent';
 
 Vue.use(Router);
 
@@ -56,6 +57,12 @@ export const router = new Router({
             component: AddNewStudent,
             meta: { authorize: [Role.Admin] }
         },
+        {
+            path: '/editconcretestudent',
+            component: EditConcreteStudent,
+            meta: { authorize: [Role.Admin] }
+        },
+
         // otherwise redirect to home
         { path: '*', redirect: '/' }
     ]

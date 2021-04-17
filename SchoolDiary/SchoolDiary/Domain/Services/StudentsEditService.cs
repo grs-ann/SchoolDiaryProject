@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolDiary.Domain.Data;
 using SchoolDiary.Domain.Data.Entities;
+using SchoolDiary.Domain.Models.Authentication;
 using SchoolDiary.Domain.Models.Student;
 using SchoolDiary.Domain.Services.Interfaces;
 using System;
@@ -17,11 +18,13 @@ namespace SchoolDiary.Domain.Services
     public interface IStudentsEditService : ICRUD<Student>
     {
         Task<Student> ChangeClassForStudent(StudentsAndClassesModel model);
+        Task<Student> ChangeStudent(RegisterStudentModel model);
     }
     /// <summary>
     /// This service contains a set of methods 
     /// with logic for managing students.
     /// </summary>
+
     public class StudentsEditService : IStudentsEditService
     {
         private readonly DataContext _dbContext;
@@ -44,6 +47,23 @@ namespace SchoolDiary.Domain.Services
                 student.Class = _class;
                 await _dbContext.SaveChangesAsync();
                 return student;
+            }
+            return null;
+        }
+
+        public async Task<Student> ChangeStudent(RegisterStudentModel model)
+        {
+            // TODO: Finish this method!
+            var id = 5;
+            if (id != 0)
+            {
+                var studentToChange = await _dbContext.Students
+                    .Include(s => s.User)
+                    .FirstOrDefaultAsync(s => s.Id == id);
+                if (studentToChange != null)
+                {
+                    return studentToChange;
+                }
             }
             return null;
         }

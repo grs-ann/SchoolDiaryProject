@@ -12,7 +12,6 @@ using SchoolDiary.Domain.Services;
 using SchoolDiary.Helpers;
 using SchoolDiary.Helpers.Interfaces;
 using Microsoft.AspNetCore.CookiePolicy;
-using System.Threading.Tasks;
 using VueCliMiddleware;
 using System.Text;
 

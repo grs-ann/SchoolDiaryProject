@@ -1,7 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
-//import { requestOptions } from '@/_helpers';
 
 module.exports = {
     mode: 'development',
@@ -11,12 +10,19 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.vue?$/,
+                test: /\.vue$/,
                 loader: 'vue-loader'
             },
             {
                 test: /\.js?$/,
                 loader: 'babel-loader'
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    'vue-style-loader',
+                    'css-loader'
+                ]
             }
         ]
     },
@@ -27,8 +33,8 @@ module.exports = {
         }
     },
     plugins: [
-        new VueLoaderPlugin(),
-        new HtmlWebpackPlugin({ template: './src/index.html' })
+        new HtmlWebpackPlugin({ template: './src/index.html' }),
+        new VueLoaderPlugin()
     ],
     devServer: {
         historyApiFallback: true

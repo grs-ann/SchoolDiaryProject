@@ -59,6 +59,7 @@ export const router = new Router({
         },
         {
             path: '/editconcretestudent',
+            name: 'TEST',
             component: EditConcreteStudent,
             meta: { authorize: [Role.Admin] }
         },

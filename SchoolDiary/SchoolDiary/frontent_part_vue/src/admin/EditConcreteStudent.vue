@@ -1,7 +1,6 @@
 <template>
     <div>
-        <p>Изменение ученика</p>
-        {{ oldUserData }}
+        {{ gg }}
     </div>
 </template>
 
@@ -9,12 +8,11 @@
 export default {
     data() {
         return {
+            gg: 'gg'
         }
     },
     props: {
-        oldUserData: {
-            type: Object,
-        }
+        
     }
 }
 </script>

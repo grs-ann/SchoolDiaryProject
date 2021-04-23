@@ -1,12 +1,12 @@
 <template>
-    <div class="gg">
+    <div>
         <ul v-bind:style="styles.listStyle">
             <li>
                 {{ userIndex }})
                 {{ studentData.user.firstname }}
                 {{ studentData.user.lastname }} - 
                 {{ studentData.class.name }}
-                <button @click="editStudent">Редактировать</button>
+                <button @click="editStudent(studentData)">Редактировать</button>
                 <button class="btn-danger" @click='del'>Удалить</button>
             </li>
         </ul>
@@ -14,10 +14,14 @@
 </template>
 
 <script>
-import EditStudents from './EditStudents.vue'
+import editConcreteStudent from './EditConcreteStudent'
 export default {
+    components: {
+        editConcreteStudent
+    },
     data() {
         return {
+            //studentData: null,
             userIndex: this.index,
             userId: '',
             styles: {
@@ -35,10 +39,6 @@ export default {
             type: Number,
         }
     },
-    // props: [
-    //     'studentData',
-    //     'index'
-    // ],
     methods: {
         del() {
             this.userId = this.studentData.user.id
@@ -46,10 +46,11 @@ export default {
             // Создаем эмит(событие), далее его может слушать родительский компонент.
             this.$emit('onDelete', this.userId)
         },
-        editStudent() {
-            console.log(this.studentData);
-            //this.$emit('onEdit', this.studentData);
-            this.$router.push({ name: 'TEST' })
+        editStudent(data) {
+            this.$emit('concreteStudentEdit', {
+                data: this.studentData,
+                clickedStatus: true
+            });
         }
     }
 }

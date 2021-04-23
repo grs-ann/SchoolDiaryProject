@@ -1,17 +1,23 @@
 <template>
   <div>
     <h1>Редактирование учеников</h1>
-    <router-link v-if="isAdmin" to="/addnewstudent" class="nav-item nav-link"
-      >Добавить нового ученика</router-link
-    >
-    <div>
-      <concreteStudent
-        v-for="(student, index) in students"
-        :index="Number(index + 1)"
-        :studentData="student"
-        @onDelete="deleteUser"
-        :key="student.user.firstname"
-      />
+    <editConcreteStudent v-if="studentEditClicked"
+      :studentData="studentDataForEdit"
+      @studentApplyChanges="concreteStudentChange"
+    />
+    <div v-if="!studentEditClicked">
+      <router-link v-if="isAdmin" to="/addnewstudent" class="nav-item nav-link"
+      >Добавить нового ученика</router-link>
+      <div>
+        <concreteStudent
+          v-for="(student, index) in students"
+          :index="Number(index + 1)"
+          :studentData="student"
+          @onDelete="deleteUser"
+          @concreteStudentEdit="studentEdit"
+          :key="student.user.firstname"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -28,8 +34,10 @@ export default {
       concreteStudent,
       editConcreteStudent
   },
+  
   data() {
     return {
+      studentDataForEdit: null,
       students: [],
       id: "",
       styles: {
@@ -37,7 +45,7 @@ export default {
           "list-style-type": "none",
         },
       },
-      editClicked: false,
+      studentEditClicked: false,
     };
   },
   created() {
@@ -47,6 +55,10 @@ export default {
     isAdmin() {
       return app.isAdmin();
     },
+    /**
+     * Удаляет ученика(пользователя) по id.
+     * @param {id} Id пользователя, хранящегося в базе данных.
+     */
     deleteUser(id) {
       console.log(`Родительский помпонент принял и удалил юзера с айди: ${id}`);
       this.id = id;
@@ -56,15 +68,19 @@ export default {
       this.students.splice(indexForDelete, 1);
       userService.deleteStudentById(this.id);
     },
+    /**
+     * Изменяет данные об ученике.
+     */
+    concreteStudentChange(studentData) {
+      console.log(studentData);
+    },
     getStudents() {
       userService.getAllStudents().then((res) => (this.students = res));
     },
-    // editConcreteStudent(studentData) {
-    //   this.editClicked = true;
-    //   console.log(studentData.id);
-    //   this.$emit("gg", studentData.id);
-    //   router.push({ name: 'TEST', $props: { userId:'gg' }});
-    // },
+    studentEdit(data) {
+      this.studentEditClicked = data.clickedStatus;
+      this.studentDataForEdit = data.data;
+    }
   },
 };
 </script>

@@ -17,8 +17,7 @@ namespace SchoolDiary.Domain.Services
     /// </summary>
     public interface IStudentsEditService : ICRUD<Student>
     {
-        Task<Student> ChangeClassForStudent(StudentsAndClassesModel model);
-        Task<Student> ChangeStudent(RegisterStudentModel model);
+        Task<Student> ChangeStudent(EditStudentModel model);
     }
     /// <summary>
     /// This service contains a set of methods 
@@ -33,46 +32,35 @@ namespace SchoolDiary.Domain.Services
             _dbContext = dbContext;
         }
         /// <summary>
-        /// Changes class for concrete student.
+        /// Edits student data with new data from model.
         /// </summary>
-        /// <param name="model">Contains student Id and class Id.</param>
-        /// <returns>Changed student.</returns>
-        public async Task<Student> ChangeClassForStudent(StudentsAndClassesModel model)
+        /// <param name="model">Represents new student data. Comes from frontend.</param>
+        /// <returns></returns>
+        public async Task<Student> ChangeStudent(EditStudentModel model)
         {
-            var _class = await _dbContext.Classes
-                .FirstOrDefaultAsync(c => c.Id == model.ClassId);
-            var student = await GetByIdAsync(model.StudentId);
-            if (student != null)
-            {
-                student.Class = _class;
-                await _dbContext.SaveChangesAsync();
-                return student;
-            }
-            return null;
-        }
-
-        public async Task<Student> ChangeStudent(RegisterStudentModel model)
-        {
-            // TODO: Finish this method!
-            var id = 5;
-            if (id != 0)
+            if (model.Id != 0)
             {
                 var studentToChange = await _dbContext.Students
                     .Include(s => s.User)
-                    .FirstOrDefaultAsync(s => s.Id == id);
+                    .FirstOrDefaultAsync(s => s.Id == model.Id);
                 if (studentToChange != null)
                 {
+                    studentToChange.User.Login = model.Login;
+                    studentToChange.User.Firstname = model.Firstname;
+                    studentToChange.User.Lastname = model.Lastname;
+                    studentToChange.User.Patronymic = model.Patronymic;
+                    studentToChange.User.Phone = model.Phone;
+                    studentToChange.ClassId = model.ClassId;
+                    await _dbContext.SaveChangesAsync();
                     return studentToChange;
                 }
             }
             return null;
         }
-
         public Task<Student> DeleteByIdAsync(int id)
         {
             throw new NotImplementedException();
         }
-
         /// <summary>
         /// Gets all students from database
         /// 'Students' table.

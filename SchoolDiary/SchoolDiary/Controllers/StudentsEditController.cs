@@ -23,24 +23,6 @@ namespace SchoolDiary.Controllers
         {
             _studentsEditService = studentsEditService;
         }
-        /// <summary>
-        /// Changes student class.
-        /// </summary>
-        /// <param name="model">Containes student Id and class Id.</param>
-        /// <returns>Result of changes class for student.</returns>
-        public async Task<IActionResult> ChangeStudentClass(StudentsAndClassesModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var editedStudent = await _studentsEditService.ChangeClassForStudent(model);
-                if (editedStudent != null)
-                {
-                    return Ok($"Класс ученика был изменен на {editedStudent.Class.Name}");
-                }
-                ModelState.AddModelError("Error", "Не удалось изменить класс для ученика.");
-            }
-            return BadRequest(ModelState);
-        }
         [HttpGet("GetAllStudents")]
         public IActionResult GetAllStudents()
         {
@@ -51,6 +33,19 @@ namespace SchoolDiary.Controllers
                 return BadRequest(ModelState);
             }
             return Ok(students);
+        }
+        [HttpPut("ChangeStudent")]
+        public async Task<IActionResult> ChangeStudent(EditStudentModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var editedStudent = await _studentsEditService.ChangeStudent(model);
+                if (editedStudent != null)
+                {
+                    return Ok(editedStudent);
+                }
+            }
+            return BadRequest(ModelState);
         }
     }
 }

@@ -44,6 +44,7 @@ function deleteStudentById(id) {
  */
 function changeStudent(studentData) {
     return fetch(`${requestOptions.aspRoute}/api/studentsedit/changestudent`, requestOptions.put(studentData))
+        .then(handleResponse)
 }
 
 

@@ -2,7 +2,7 @@
     <div v-bind:style="styleForm">
         <p>Добавление нового ученика</p>
         <form @submit.prevent="addNewStudent">
-            <div v-bind:style="styleObject">
+            <div>
                 <p v-if="newUserData.submitted">{{ validations.login }}</p>
                 <input type="text" placeholder="Логин" v-model="newUserData.login"><br/>
                 <p v-if="newUserData.submitted">{{ validations.password }}</p>

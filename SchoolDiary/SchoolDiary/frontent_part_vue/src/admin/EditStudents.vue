@@ -3,6 +3,8 @@
     <h1>Редактирование учеников</h1>
     <editConcreteStudent v-if="studentEditClicked"
       :studentData="studentDataForEdit"
+      :studentEditClicked="studentEditClicked"
+      :studentEditValidation="studentEditValidation"
       @studentApplyChanges="concreteStudentChange"
     />
     <div v-if="!studentEditClicked">
@@ -34,7 +36,6 @@ export default {
       concreteStudent,
       editConcreteStudent
   },
-  
   data() {
     return {
       studentDataForEdit: null,
@@ -46,6 +47,7 @@ export default {
         },
       },
       studentEditClicked: false,
+      studentEditValidation: {}
     };
   },
   created() {
@@ -72,7 +74,12 @@ export default {
      * Изменяет данные об ученике.
      */
     concreteStudentChange(studentData) {
-      console.log(studentData);
+      //console.log(studentData);
+      userService.changeStudent(studentData)
+        .then(result => this.$router.go({ name: 'EditStudents' }))
+        .catch(err => this.studentEditValidation = err)
+
+        //.then(() => console.log(this.studentEditValidation));
     },
     getStudents() {
       userService.getAllStudents().then((res) => (this.students = res));

@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace SchoolDiary.Domain.Models.Authentication
 {
+    /// <summary>
+    /// Represents base register model, this
+    /// data is expected to come from frontend.
+    /// </summary>
     public class BaseRegisterModel
     {
         [Required]

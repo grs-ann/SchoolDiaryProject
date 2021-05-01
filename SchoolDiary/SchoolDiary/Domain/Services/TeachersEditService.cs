@@ -20,7 +20,7 @@ namespace SchoolDiary.Domain.Services
         Task<TeachersClasses> DeleteClassForTeacher(int teacherId, int classId);
         Task<TeachersSubjects> AddSubjectToTeacher(int teacherId, int subjectId);
         Task<TeachersSubjects> DeleteSubjectFromTeacher(int teacherId, int subjectId);
-        Task<Teacher> EditTeacherAsync(TeacherModel model);
+        Task<Teacher> ChangeTeacherAsync(EditTeacherModel model);
     }
     /// <summary>
     /// This service contains a set of methods 
@@ -40,7 +40,8 @@ namespace SchoolDiary.Domain.Services
         /// <returns>All teachers.</returns>
         public IEnumerable<Teacher> GetAll()
         {
-            var teachers = _dbContext.Teachers;
+            var teachers = _dbContext.Teachers
+                .Include(u => u.User);
             return teachers;
         }
         /// <summary>
@@ -58,16 +59,26 @@ namespace SchoolDiary.Domain.Services
         /// Edits teacher in database
         /// 'Teachers' table.
         /// </summary>
-        /// <param name="model">Contains teacher Id and salary.</param>
+        /// <param name="model">Contains new teacher data.</param>
         /// <returns>Edited teacher.</returns>
-        public async Task<Teacher> EditTeacherAsync(TeacherModel model)
+        public async Task<Teacher> ChangeTeacherAsync(EditTeacherModel model)
         {
-            var teacher = await this.GetByIdAsync(model.Id);
-            if (teacher != null)
+            if (model.Id != 0)
             {
-                teacher.Salary = model.Salary;
-                await _dbContext.SaveChangesAsync();
-                return teacher;
+                var teacherToChange = await _dbContext.Teachers
+                    .Include(s => s.User)
+                    .FirstOrDefaultAsync(s => s.Id == model.Id);
+                if (teacherToChange != null)
+                {
+                    teacherToChange.User.Login = model.Login;
+                    teacherToChange.User.Firstname = model.Firstname;
+                    teacherToChange.User.Lastname = model.Lastname;
+                    teacherToChange.User.Patronymic = model.Patronymic;
+                    teacherToChange.User.Phone = model.Phone;
+                    teacherToChange.Salary = model.Salary;
+                    await _dbContext.SaveChangesAsync();
+                    return teacherToChange;
+                }
             }
             return null;
         }

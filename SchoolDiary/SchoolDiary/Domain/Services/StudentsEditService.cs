@@ -17,7 +17,7 @@ namespace SchoolDiary.Domain.Services
     /// </summary>
     public interface IStudentsEditService : ICRUD<Student>
     {
-        Task<Student> ChangeStudent(EditStudentModel model);
+        Task<Student> ChangeStudentAsync(EditStudentModel model);
     }
     /// <summary>
     /// This service contains a set of methods 
@@ -36,7 +36,7 @@ namespace SchoolDiary.Domain.Services
         /// </summary>
         /// <param name="model">Represents new student data. Comes from frontend.</param>
         /// <returns></returns>
-        public async Task<Student> ChangeStudent(EditStudentModel model)
+        public async Task<Student> ChangeStudentAsync(EditStudentModel model)
         {
             if (model.Id != 0)
             {

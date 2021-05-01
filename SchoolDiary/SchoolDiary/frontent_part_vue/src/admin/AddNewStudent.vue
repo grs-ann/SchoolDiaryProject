@@ -75,7 +75,7 @@ export default {
      */
     methods: {
         addNewStudent() {
-            // Refresh validation properties.
+            // Обновляет все предыдущие сообщения валидации.
             for(let prop in this.validations) {
                 this.validations[prop] = '';
             }

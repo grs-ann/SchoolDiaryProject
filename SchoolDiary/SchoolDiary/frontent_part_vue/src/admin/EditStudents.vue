@@ -13,7 +13,7 @@
       <div>
         <concreteStudent
           v-for="(student, index) in students"
-          :index="Number(index + 1)"
+          :index="index"
           :studentData="student"
           @onDelete="deleteUser"
           @concreteStudentEdit="studentEdit"
@@ -74,7 +74,6 @@ export default {
      * Изменяет данные об ученике.
      */
     concreteStudentChange(studentData) {
-      //console.log(studentData);
       userService.changeStudent(studentData)
         .then(result => this.$router.go({ name: 'EditStudents' }))
         .catch(err => this.studentEditValidation = err)

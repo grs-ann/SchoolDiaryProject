@@ -18,7 +18,7 @@
             <p :style="styleObject" v-if="applySubmitted">{{ validations.phone }}</p>
             <label>Телефон</label>
             <input type="text" placeholder="Номер телефона" v-model="studentData.user.phone"><br/>
-             
+
             <button @click="applyChanges">Принять изменения</button>
             <button @click="cancelChanges">Отменить изменения</button>
 
@@ -86,7 +86,7 @@ export default {
             this.studentEditData.login = this.studentData.user.login;
             this.studentEditData.phone = this.studentData.user.phone;
             this.studentEditData.classId = this.studentData.classId;
-            this.$emit('studentApplyChanges', this.studentEditData)
+            this.$emit('studentApplyChanges', this.studentEditData);
         },
         cancelChanges() {
             this.$router.go({ name: 'EditStudents' });

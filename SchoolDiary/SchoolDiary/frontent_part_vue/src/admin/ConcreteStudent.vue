@@ -2,7 +2,7 @@
     <div>
         <ul v-bind:style="styles.listStyle">
             <li>
-                {{ userIndex }})
+                {{ index + 1 }})
                 {{ studentData.user.firstname }}
                 {{ studentData.user.lastname }} - 
                 {{ studentData.class.name }}
@@ -21,8 +21,6 @@ export default {
     },
     data() {
         return {
-            //studentData: null,
-            userIndex: this.index,
             userId: '',
             styles: {
                 listStyle: {

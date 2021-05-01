@@ -1,4 +1,3 @@
-import config from 'config';
 import { handleResponse, requestOptions } from '@/_helpers';
 
 export const classService = {

@@ -7,12 +7,12 @@ import HomePage from '@/home/HomePage';
 import AdminPage from '@/admin/AdminPage';
 import LoginPage from '@/login/LoginPage';
 import EditStudents from '@/admin/EditStudents';
-import EditTeachers from '@/admin/EditTeachers';
+import EditTeachers from '@/admin/Teachers/EditTeachers';
 import EditSchedule from '@/admin/EditSchedule';
 import EditClasses from '@/admin/EditClasses';
 import AddNewStudent from '@/admin/AddNewStudent';
 import EditConcreteStudent from '@/admin/EditConcreteStudent';
-
+import AddNewTeacher from '@/admin/Teachers/AddNewTeacher';
 Vue.use(Router);
 
 export const router = new Router({
@@ -33,6 +33,7 @@ export const router = new Router({
             component: LoginPage 
         },
         {
+            name: 'EditTeachers',
             path: '/editteachers',
             component: EditTeachers,
             meta: { authorize: [Role.Admin] }
@@ -62,6 +63,11 @@ export const router = new Router({
             path: '/editconcretestudent',
             name: 'TEST',
             component: EditConcreteStudent,
+            meta: { authorize: [Role.Admin] }
+        },
+        {
+            path: '/addnewteacher',
+            component: AddNewTeacher,
             meta: { authorize: [Role.Admin] }
         },
 

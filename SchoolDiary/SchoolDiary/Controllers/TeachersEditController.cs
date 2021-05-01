@@ -73,16 +73,21 @@ namespace SchoolDiary.Controllers
         /// </summary>
         /// <param name="model">Contains 'Teachers' columns for editing.</param>
         /// <returns>Result of teacher editing.</returns>
-        [HttpPut("EditTeacher")]
-        public async Task<IActionResult> EditTeacher(TeacherModel model)
+        [HttpPut("ChangeTeacher")]
+        public async Task<IActionResult> ChangeTeacher(EditTeacherModel model)
         {
-            var editedTeacher = await _teachersEditService.EditTeacherAsync(model);
-            if (editedTeacher == null)
+            if (ModelState.IsValid)
             {
-                ModelState.AddModelError("Error", "Не удалось изменить пользователя!");
-                return BadRequest(ModelState);
+                var editedTeacher = await _teachersEditService.ChangeTeacherAsync(model);
+                if (editedTeacher == null)
+                {
+                    ModelState.AddModelError("Error", "Не удалось изменить пользователя!");
+                    return BadRequest(ModelState);
+                }
+                //return Ok($"Учитель был изменён.");
+                return Ok();
             }
-            return Ok($"Учитель был изменён.");
+            return BadRequest(ModelState);
         }
         /// <summary>
         /// Adds class to teacher by 

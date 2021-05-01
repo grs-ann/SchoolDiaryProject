@@ -39,7 +39,7 @@ namespace SchoolDiary.Controllers
         {
             if (ModelState.IsValid)
             {
-                var editedStudent = await _studentsEditService.ChangeStudent(model);
+                var editedStudent = await _studentsEditService.ChangeStudentAsync(model);
                 if (editedStudent != null)
                 {
                     return Ok(editedStudent);

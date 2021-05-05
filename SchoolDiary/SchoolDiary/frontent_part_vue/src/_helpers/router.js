@@ -4,7 +4,6 @@ import Router from 'vue-router';
 import { authenticationService } from '@/_services';
 import { Role } from '@/_helpers';
 import HomePage from '@/home/HomePage';
-import AdminPage from '@/admin/AdminPage';
 import LoginPage from '@/login/LoginPage';
 import EditStudents from '@/admin/EditStudents';
 import EditTeachers from '@/admin/Teachers/EditTeachers';
@@ -22,11 +21,6 @@ export const router = new Router({
             path: '/', 
             component: HomePage, 
             meta: { authorize: [] } 
-        },
-        { 
-            path: '/admin', 
-            component: AdminPage, 
-            meta: { authorize: [Role.Admin] } 
         },
         { 
             path: '/login', 

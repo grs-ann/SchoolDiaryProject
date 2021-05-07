@@ -5,7 +5,7 @@ export const requestOptions = {
     get() {
         return {
             method: 'GET',
-            ...headers(),
+            ...headers()
         };
     },
     post(body) {

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace SchoolDiary.Domain.Models.Teacher
 {
@@ -22,5 +23,7 @@ namespace SchoolDiary.Domain.Models.Teacher
         [Required(ErrorMessage = "Необходимо указать зарплату учителя.")]
         [Range(0, 300000, ErrorMessage = "Зарплата должна быть в пределах от 0 до 300000 рублей.")]
         public decimal Salary { get; set; }
+        // List of classIds, pinned to the teacher.
+        public List<int> ClassIds { get; set; }
     }
 }

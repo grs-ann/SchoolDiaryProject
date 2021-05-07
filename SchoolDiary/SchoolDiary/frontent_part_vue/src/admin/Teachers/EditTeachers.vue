@@ -28,9 +28,9 @@
 
 <script>
 import { teacherService, userService} from '@/_services';
-
 import concreteTeacher from './ConcreteTeacher';
 import editConcreteTeacher from './EditConcreteTeacher';
+
 export default {
     components: {
         concreteTeacher,

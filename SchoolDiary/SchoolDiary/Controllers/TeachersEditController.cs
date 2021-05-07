@@ -2,9 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SchoolDiary.Domain.Models.Teacher;
 using SchoolDiary.Domain.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SchoolDiary.Controllers
@@ -84,94 +81,24 @@ namespace SchoolDiary.Controllers
                     ModelState.AddModelError("Error", "Не удалось изменить пользователя!");
                     return BadRequest(ModelState);
                 }
-                //return Ok($"Учитель был изменён.");
                 return Ok();
             }
             return BadRequest(ModelState);
         }
         /// <summary>
-        /// Adds class to teacher by 
-        /// teacher and subject id's.
+        /// Gets collection of classes, which pinned to concrete teacher.
         /// </summary>
-        /// <param name="model">Contains teacher and class id's.</param>
-        /// <returns>Result of class adding to teacher.</returns>
-        [HttpPost("AddClassToTeacher")]
-        public async Task<IActionResult> AddClassToTeacher(TeachersAndClassesModel model)
+        /// <param name="teacherId">Teacher Id in database 'Teachers' table.</param>
+        /// <returns>IEnumerable, containing classes.</returns>
+        [HttpGet("GetPinnedClassesByTeacherId")]
+        public IActionResult GetPinnedClassesByTeacherId(int teacherId)
         {
-            if (ModelState.IsValid)
+            var classes = _teachersEditService.GetPinnedClassesByTeacherId(teacherId);
+            if (classes != null)
             {
-                var res = await _teachersEditService.AddClassToTeacher(model.TeacherId, model.ClassId);
-                if (res == null)
-                {
-                    ModelState.AddModelError("Error", "Класс не был добавлен к учителю.");
-                    return BadRequest(ModelState);
-                }
-                return Ok("Класс добавлен к учителю.");
+                return Ok(classes);
             }
-            return BadRequest(ModelState);
-        }
-        /// <summary>
-        /// Deletes class from teacher by 
-        /// teacher and subject id's.
-        /// </summary>
-        /// <param name="model">Contains teacher and class id's.</param>
-        /// <returns>Result of class deleting from teacher.</returns>
-        [HttpDelete("DeleteClassFromTeacher")]
-        public async Task<IActionResult> DeleteClassFromTeacher(TeachersAndClassesModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var res = await _teachersEditService.DeleteClassForTeacher(model.TeacherId, model.ClassId);
-                if (res == null)
-                {
-                    ModelState.AddModelError("Error", "Не удалось удалить класс у учителя.");
-                    return BadRequest(ModelState);
-                }
-                return Ok($"Класс был удален у учителя.");
-            }
-            return BadRequest(ModelState);
-        }
-        /// <summary>
-        /// Adds subject to teacher by 
-        /// teacher and subject id's.
-        /// </summary>
-        /// <param name="model">Contains teacher and subject id's.</param>
-        /// <returns>Result of subject adding to teacher.</returns>
-        [HttpPost("AddSubjectToTeacher")]
-        public async Task<IActionResult> AddSubjectToTeacher(TeachersAndSubjectsModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var res = await _teachersEditService.AddSubjectToTeacher(model.TeacherId, model.SubjectId);
-                if (res == null)
-                {
-                    ModelState.AddModelError("Error", "Предмет не был добавлен к учителю.");
-                    return BadRequest(ModelState);
-                }
-                return Ok("Предмет добавлен к учителю.");
-            }
-            return BadRequest(ModelState);
-        }
-        /// <summary>
-        /// Deletes subject from teacher by 
-        /// teacher and subject id's.
-        /// </summary>
-        /// <param name="model">Contains teacher and subject id's.</param>
-        /// <returns>Result of subject deleting from teacher.</returns>
-        [HttpDelete("DeleteSubjectFromTeacher")]
-        public async Task<IActionResult> DeleteSubjectFromTeacher(TeachersAndSubjectsModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var res = await _teachersEditService.DeleteSubjectFromTeacher(model.TeacherId, model.SubjectId);
-                if (res == null)
-                {
-                    ModelState.AddModelError("Error", "Не удалось удалить предмет у учителя.");
-                    return BadRequest(ModelState);
-                }
-                return Ok($"Предмет был удален у учителя.");
-            }
-            return BadRequest(ModelState);
+            return BadRequest("Не удалось получить список предметов.");
         }
     }
 }

@@ -16,11 +16,9 @@ namespace SchoolDiary.Domain.Services
     /// </summary>
     public interface ITeachersEditService : ICRUD<Teacher>
     {
-        Task<TeachersClasses> AddClassToTeacher(int teacherId, int classId);
-        Task<TeachersClasses> DeleteClassForTeacher(int teacherId, int classId);
-        Task<TeachersSubjects> AddSubjectToTeacher(int teacherId, int subjectId);
-        Task<TeachersSubjects> DeleteSubjectFromTeacher(int teacherId, int subjectId);
+        IEnumerable<TeachersClasses> GetPinnedClassesByTeacherId(int teacherId);
         Task<Teacher> ChangeTeacherAsync(EditTeacherModel model);
+        Task ChangePinnedClassesForTeacherAsync(int teacherId, IEnumerable<int> classIds);
     }
     /// <summary>
     /// This service contains a set of methods 
@@ -56,6 +54,18 @@ namespace SchoolDiary.Domain.Services
             return teacher;
         }
         /// <summary>
+        /// Gets collection of classes, which pinned
+        /// to concrete teacher.
+        /// </summary>
+        /// <param name="id">Teacher id.</param>
+        /// <returns></returns>
+        public IEnumerable<TeachersClasses> GetPinnedClassesByTeacherId(int id)
+        {
+            var classes = _dbContext.TeachersClasses
+                .Where(tc => tc.TeacherId == id);
+            return classes;
+        }
+        /// <summary>
         /// Edits teacher in database
         /// 'Teachers' table.
         /// </summary>
@@ -76,6 +86,12 @@ namespace SchoolDiary.Domain.Services
                     teacherToChange.User.Patronymic = model.Patronymic;
                     teacherToChange.User.Phone = model.Phone;
                     teacherToChange.Salary = model.Salary;
+                    
+                    if (model.ClassIds.Count >= 0)
+                    {
+                        var teacherId = teacherToChange.User.Teacher.Id;
+                        await this.ChangePinnedClassesForTeacherAsync(teacherId, model.ClassIds);
+                    }
                     await _dbContext.SaveChangesAsync();
                     return teacherToChange;
                 }
@@ -83,121 +99,51 @@ namespace SchoolDiary.Domain.Services
             return null;
         }
         /// <summary>
-        /// Deletes teacher(as User) from
-        /// database 'Users', 'Teachers' tables by teacher Id.
+        /// Changes the bound classes to the teacher
+        /// by his id.
         /// </summary>
-        /// <param name="id">Teacher Id.</param>
-        /// <returns>Deleted teacher.</returns>
-        public async Task<Teacher> DeleteByIdAsync(int id)
-        {
-            var userToDelete = await _dbContext.Users.Include(u => u.Teacher).FirstOrDefaultAsync(u => u.Teacher.Id == id);
-            if (userToDelete != null)
-            {
-                _dbContext.Users.Remove(userToDelete);
-                await _dbContext.SaveChangesAsync();
-                return userToDelete.Teacher;
-            }
-            return null;
-        }
-        /// <summary>
-        /// Adds class to teacher by theirs ids.
-        /// </summary>
-        /// <param name="teacherId">Teacher Id.</param>
-        /// <param name="classId">Class Id.</param>
+        /// <param name="teacherId">Teacher id in database.</param>
+        /// <param name="classIds">Class id in database.</param>
         /// <returns></returns>
-        public async Task<TeachersClasses> AddClassToTeacher(int teacherId, int classId)
+        public async Task ChangePinnedClassesForTeacherAsync(int teacherId, IEnumerable<int> classIds)
         {
-            var teacher = await _dbContext.Teachers
-                .FirstOrDefaultAsync(t => t.Id == teacherId);
-            var _class = await _dbContext.Classes
-                .FirstOrDefaultAsync(c => c.Id == classId);
-            if (teacher != null && _class != null)
+            var alreadyPinnedClasses = _dbContext.TeachersClasses
+                .Where(tc => tc.TeacherId == teacherId)
+                .AsEnumerable();
+            var classIdsToDetach = alreadyPinnedClasses
+                .Select(pc => pc.ClassId)
+                .Except(classIds);
+            var classIdsToPin = classIds
+                .Except(alreadyPinnedClasses
+                .Select(pc => pc.ClassId)
+                .AsEnumerable());
+            if (classIdsToDetach.Any())
             {
-                var res = new TeachersClasses
+                foreach (var classId in classIdsToDetach)
                 {
-                    Teacher = teacher,
-                    Class = _class
-                };
-                await _dbContext.TeachersClasses.AddAsync(res);
-                await _dbContext.SaveChangesAsync();
-                return res;
-            }
-            return null;
-        }
-        /// <summary>
-        /// Deletes class for teacher by theirs ids.
-        /// </summary>
-        /// <param name="teacherId">Teacher Id.</param>
-        /// <param name="classId">Class Id.</param>
-        /// <returns>Deleted TeachersClasses item.</returns>
-        public async Task<TeachersClasses> DeleteClassForTeacher(int teacherId, int classId)
-        {
-            var teacher = await _dbContext.Teachers
-                .FirstOrDefaultAsync(t => t.Id == teacherId);
-            var _class = await _dbContext.Classes
-                .FirstOrDefaultAsync(c => c.Id == classId);
-            if (teacher != null && _class != null)
-            {
-                var itemToDelete = await _dbContext.TeachersClasses
-                    .FirstOrDefaultAsync(tc => tc.TeacherId == teacherId &&
-                    tc.ClassId == classId);
-                if (itemToDelete != null)
-                {
-                    _dbContext.Remove(itemToDelete);
-                    return itemToDelete;
+                    var detached = await _dbContext
+                        .TeachersClasses
+                        .FirstOrDefaultAsync(tc => tc.ClassId == classId);
+                    _dbContext.Remove(detached);
                 }
             }
-            return null;
-        }
-        /// <summary>
-        /// Adds subject to teacher by theirs ids.
-        /// </summary>
-        /// <param name="teacherId">Teacher Id.</param>
-        /// <param name="subjectId">Subject Id.</param>
-        /// <returns>TeachersSubjects table item.</returns>
-        public async Task<TeachersSubjects> AddSubjectToTeacher(int teacherId, int subjectId)
-        {
-            var teacher = await _dbContext.Teachers
-                .FirstOrDefaultAsync(t => t.Id == teacherId);
-            var subject = await _dbContext.Subjects
-                .FirstOrDefaultAsync(c => c.Id == subjectId);
-            if (teacher != null && subject != null)
+            if (classIdsToPin.Any())
             {
-                var res = new TeachersSubjects
+                foreach (var classId in classIdsToPin)
                 {
-                    Teacher = teacher,
-                    Subject = subject
-                };
-                await _dbContext.TeachersSubjects.AddAsync(res);
-                await _dbContext.SaveChangesAsync();
-                return res;
-            }
-            return null;
-        }
-        /// <summary>
-        /// Deletes subject from teacher by theirs ids.
-        /// </summary>
-        /// <param name="teacherId">Teacher Id.</param>
-        /// <param name="subjectId">Subject Id.</param>
-        /// <returns>Deleted TeachersSubjects item.</returns>
-        public async Task<TeachersSubjects> DeleteSubjectFromTeacher(int teacherId, int subjectId)
-        {
-            var teacher = await _dbContext.Teachers
-                .FirstOrDefaultAsync(t => t.Id == teacherId);
-            var subject = await _dbContext.Subjects
-                .FirstOrDefaultAsync(c => c.Id == subjectId);
-            if (teacher != null && subject != null)
-            {
-                var itemToDelete = await _dbContext.TeachersSubjects
-                    .FirstOrDefaultAsync(tc => tc.TeacherId == teacherId &&
-                    tc.SubjectId == subjectId);
-                if (itemToDelete != null)
-                {
-                    _dbContext.Remove(itemToDelete);
-                    return itemToDelete;
+                    var toPin = new TeachersClasses
+                    {
+                        ClassId = classId,
+                        TeacherId = teacherId
+                    };
+                    await _dbContext.AddAsync(toPin);
                 }
             }
-            return null;
+            await _dbContext.SaveChangesAsync();
+        }
+        public Task<Teacher> DeleteByIdAsync(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

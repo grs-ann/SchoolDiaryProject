@@ -16,9 +16,8 @@ namespace SchoolDiary.Domain.Services
     /// </summary>
     public interface ITeachersEditService : ICRUD<Teacher>
     {
-        IEnumerable<TeachersClasses> GetPinnedClassesByTeacherId(int teacherId);
+        IEnumerable<Class> GetPinnedClassesByTeacherId(int teacherId);
         Task<Teacher> ChangeTeacherAsync(EditTeacherModel model);
-        Task ChangePinnedClassesForTeacherAsync(int teacherId, IEnumerable<int> classIds);
     }
     /// <summary>
     /// This service contains a set of methods 
@@ -59,11 +58,13 @@ namespace SchoolDiary.Domain.Services
         /// </summary>
         /// <param name="id">Teacher id.</param>
         /// <returns></returns>
-        public IEnumerable<TeachersClasses> GetPinnedClassesByTeacherId(int id)
+        public IEnumerable<Class> GetPinnedClassesByTeacherId(int id)
         {
-            var classes = _dbContext.TeachersClasses
-                .Where(tc => tc.TeacherId == id);
-            return classes;
+            var pinnedClasses = _dbContext.Teachers
+                .Include(t => t.Classes)
+                .FirstOrDefault(t => t.UserId == id)
+                .Classes;
+            return pinnedClasses;
         }
         /// <summary>
         /// Edits teacher in database
@@ -90,7 +91,7 @@ namespace SchoolDiary.Domain.Services
                     if (model.ClassIds.Count >= 0)
                     {
                         var teacherId = teacherToChange.User.Teacher.Id;
-                        await this.ChangePinnedClassesForTeacherAsync(teacherId, model.ClassIds);
+                        await ChangePinnedClassesForTeacherAsync(teacherId, model.ClassIds);
                     }
                     await _dbContext.SaveChangesAsync();
                     return teacherToChange;
@@ -98,52 +99,80 @@ namespace SchoolDiary.Domain.Services
             }
             return null;
         }
+        public Task<Teacher> DeleteByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
         /// <summary>
         /// Changes the bound classes to the teacher
         /// by his id.
         /// </summary>
         /// <param name="teacherId">Teacher id in database.</param>
-        /// <param name="classIds">Class id in database.</param>
+        /// <param name="classIds">Id's collection, comes from client.</param>
         /// <returns></returns>
-        public async Task ChangePinnedClassesForTeacherAsync(int teacherId, IEnumerable<int> classIds)
+        private async Task ChangePinnedClassesForTeacherAsync(int teacherId, List<int> classIds)
         {
-            var alreadyPinnedClasses = _dbContext.TeachersClasses
-                .Where(tc => tc.TeacherId == teacherId)
-                .AsEnumerable();
-            var classIdsToDetach = alreadyPinnedClasses
-                .Select(pc => pc.ClassId)
-                .Except(classIds);
-            var classIdsToPin = classIds
-                .Except(alreadyPinnedClasses
-                .Select(pc => pc.ClassId)
-                .AsEnumerable());
-            if (classIdsToDetach.Any())
+            // The concrete teacher with specified Id.
+            var teacher = await _dbContext
+                .Teachers
+                .Include(t => t.Classes)
+                .FirstOrDefaultAsync(x => x.Id == teacherId);
+            // All classes assigned to the teacher initially.
+            var alreadyPinnedClasses = _dbContext.Teachers
+                .Include(t => t.Classes)
+                .FirstOrDefault(t => t.Id == teacherId)
+                .Classes
+                .ToList();
+            if (alreadyPinnedClasses.Any())
             {
-                foreach (var classId in classIdsToDetach)
+                if (classIds.Any())
                 {
-                    var detached = await _dbContext
-                        .TeachersClasses
-                        .FirstOrDefaultAsync(tc => tc.ClassId == classId);
-                    _dbContext.Remove(detached);
-                }
-            }
-            if (classIdsToPin.Any())
-            {
-                foreach (var classId in classIdsToPin)
-                {
-                    var toPin = new TeachersClasses
+                    // These classes are not contained in
+                    // the received data and must be removed. 
+                    var classesToDetach = alreadyPinnedClasses.Where(x => classIds.Where(y => y != x.Id).Any()).ToList();
+                    if (classesToDetach.Any())
                     {
-                        ClassId = classId,
-                        TeacherId = teacherId
-                    };
-                    await _dbContext.AddAsync(toPin);
+                        foreach (var cl in classesToDetach)
+                        {
+                            teacher.Classes.Remove(cl);
+                        }
+                    }
+                    // These classes need to be assigned to the teacher.
+                    var classesToPin = _dbContext
+                            .Classes
+                            .Include(c => c.Teachers)
+                            .Where(c => classIds.Any(ci => c.Id == ci))
+                            .ToList();
+                    foreach (var item in classesToPin)
+                    {
+                        teacher.Classes.Add(item);
+                    }
+                }
+                // If the ID of the classes did not come
+                // from the front at all(their number is 0),
+                // then we unpin all the assigned classes.
+                else
+                {
+                    foreach (var cl in alreadyPinnedClasses)
+                    {
+                        teacher.Classes.Remove(cl);
+                    }
                 }
             }
-            await _dbContext.SaveChangesAsync();
-        }
-        public Task<Teacher> DeleteByIdAsync(int id)
-        {
-            throw new NotImplementedException();
+            // If not a single class is assigned to the teacher,
+            // then we simply attach all those who have come. 
+            else
+            {
+                var classesToPin = _dbContext
+                    .Classes
+                    .Include(c => c.Teachers)
+                    .Where(c => classIds.Any(ci => c.Id == ci))
+                    .ToList();
+                foreach (var cl in classesToPin)
+                {
+                    teacher.Classes.Add(cl);
+                }
+            }
         }
     }
 }

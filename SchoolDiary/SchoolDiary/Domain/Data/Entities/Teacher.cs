@@ -11,5 +11,7 @@ namespace SchoolDiary.Domain.Data.Entities
         // Link to 'Users' table.
         public User User { get; set; }
         public int UserId { get; set; }
+
+        public List<Class> Classes{ get; set; } = new List<Class>();
     }
 }

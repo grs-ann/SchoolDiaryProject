@@ -12,8 +12,6 @@ namespace SchoolDiary.Domain.Data
         public DbSet<Teacher> Teachers { get; set; }
         public DbSet<Class> Classes { get; set; }
         public DbSet<Subject> Subjects { get; set; }
-        public DbSet<TeachersSubjects> TeachersSubjects { get; set; }
-        public DbSet<TeachersClasses> TeachersClasses { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<Day> Days { get; set; }
         public DbSet<Time> Times { get; set; }
@@ -185,8 +183,11 @@ namespace SchoolDiary.Domain.Data
                             Name = "Воскресенье"
                         },
                     });
-
-           base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Teacher>()
+                .HasMany(t => t.Classes)
+                .WithMany(c => c.Teachers)
+                .UsingEntity(j => j.ToTable("TeachersAndClasses"));
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

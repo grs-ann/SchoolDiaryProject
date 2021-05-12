@@ -3,10 +3,15 @@
         <nav v-if="currentUser" class="navbar navbar-expand navbar-dark bg-dark">
             <div class="navbar-nav">
                 <router-link to="/" class="nav-item nav-link">Главная</router-link>
+                <!-- Отображение навигационной панели для администратора. -->
                 <router-link v-if="isAdmin" to="/editschedule" class="nav-item nav-link">Редактировать расписание</router-link>
                 <router-link v-if="isAdmin" to="/editclasses" class="nav-item nav-link">Редактировать классы</router-link>
                 <router-link v-if="isAdmin" to="/editteachers" class="nav-item nav-link">Редактировать учителей</router-link>
                 <router-link v-if="isAdmin" to="/editstudents" class="nav-item nav-link">Редактировать учеников</router-link>
+
+                <!-- Отображение навигационной панели для учителя. -->
+                <router-link v-if="isTeacher" to="/pinnedclassesmanagement" class="nav-item nav-link">Управление классами</router-link>
+
                 <a @click="logout" class="nav-item nav-link">Выйти из аккаунта</a>
             </div>
         </nav>
@@ -37,6 +42,9 @@ export default {
     computed: {
         isAdmin () {
             return this.currentUser && this.currentUser.role.name === Role.Admin;
+        },
+        isTeacher() {
+            return this.currentUser && this.currentUser.role.name === Role.Teacher;
         }
     },
     created () {

@@ -60,7 +60,6 @@
         <input type="checkbox" v-bind:value="cl.id" v-model="selectedClasses">
         <label>{{ cl.name }}</label><br/>
     </template>
-
     <button @click="applyChanges">Принять изменения</button>
     <button @click="cancelChanges">Отменить изменения</button><br/>
 
@@ -151,6 +150,9 @@ export default {
       this.teacherEditData.phone = this.teacherData.user.phone;
       this.teacherEditData.salary = this.teacherData.salary;
       this.teacherEditData.classIds = this.selectedClasses;
+
+      console.log(this.teacherEditData.classIds);
+
       if (isNaN(this.teacherEditData.salary)) {
         this.validations.salary = "Недопустимый формат для зарплаты!";
       } else {
@@ -166,7 +168,7 @@ export default {
         const authHeader = currentUser.token ? { 'Authorization': 'Bearer ' + currentUser.token } : {}
         axios.get('https://localhost:44303/api/TeachersEdit/GetPinnedClassesByTeacherId', {
             params: {
-                teacherId: this.teacherData.id
+                teacherId: this.teacherData.userId
             },
             headers: {
                 ...authHeader
@@ -175,7 +177,7 @@ export default {
         .then(response => {
             let data = response.data;
             for(let prop in data) {
-                this.selectedClasses.push(data[prop].classId);
+                this.selectedClasses.push(data[prop].id);
             }
         })
     }

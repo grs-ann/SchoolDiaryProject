@@ -12,6 +12,8 @@ import EditClasses from '@/admin/EditClasses';
 import AddNewStudent from '@/admin/AddNewStudent';
 import EditConcreteStudent from '@/admin/EditConcreteStudent';
 import AddNewTeacher from '@/admin/Teachers/AddNewTeacher';
+import PinnedClassesManagement from '@/teacher/PinnedClassesManagement';
+
 Vue.use(Router);
 
 export const router = new Router({
@@ -63,6 +65,11 @@ export const router = new Router({
             path: '/addnewteacher',
             component: AddNewTeacher,
             meta: { authorize: [Role.Admin] }
+        },
+        {
+            path: '/pinnedclassesmanagement',
+            component: PinnedClassesManagement,
+            meta: { authorize: [Role.Teacher] }
         },
 
         // otherwise redirect to home

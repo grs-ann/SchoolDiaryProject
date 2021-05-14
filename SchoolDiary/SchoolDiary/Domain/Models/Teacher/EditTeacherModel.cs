@@ -25,5 +25,7 @@ namespace SchoolDiary.Domain.Models.Teacher
         public decimal Salary { get; set; }
         // List of classIds, pinned to the teacher.
         public List<int> ClassIds { get; set; }
+        // List of SubjectIds, pinned to the teacher.
+        public List<int> SubjectIds { get; set; }
     }
 }

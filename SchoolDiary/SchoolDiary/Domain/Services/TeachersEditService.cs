@@ -93,6 +93,11 @@ namespace SchoolDiary.Domain.Services
                         var teacherId = teacherToChange.User.Teacher.Id;
                         await ChangePinnedClassesForTeacherAsync(teacherId, model.ClassIds);
                     }
+                    if (model.SubjectIds.Count >= 0)
+                    {
+                        var teacherId = teacherToChange.User.Teacher.Id;
+                        await ChangePinnedSubjectsForTeacherAsync(teacherId, model.SubjectIds);
+                    }
                     await _dbContext.SaveChangesAsync();
                     return teacherToChange;
                 }
@@ -171,6 +176,70 @@ namespace SchoolDiary.Domain.Services
                 foreach (var cl in classesToPin)
                 {
                     teacher.Classes.Add(cl);
+                }
+            }
+        }
+        private async Task ChangePinnedSubjectsForTeacherAsync(int teacherId, List<int> subjectIds)
+        {
+            // The concrete teacher with specified Id.
+            var teacher = await _dbContext
+                .Teachers
+                .Include(t => t.Subjects)
+                .FirstOrDefaultAsync(x => x.Id == teacherId);
+            // All subjects assigned to the teacher initially.
+            var alreadyPinnedSubjects = _dbContext.Teachers
+                .Include(t => t.Subjects)
+                .FirstOrDefault(t => t.Id == teacherId)
+                .Subjects
+                .ToList();
+            if (alreadyPinnedSubjects.Any())
+            {
+                if (subjectIds.Any())
+                {
+                    // These subjects are not contained in
+                    // the received data and must be removed. 
+                    var subjectsToDetach = alreadyPinnedSubjects.Where(x => subjectIds.Where(y => y != x.Id).Any()).ToList();
+                    if (subjectsToDetach.Any())
+                    {
+                        foreach (var subject in subjectsToDetach)
+                        {
+                            teacher.Subjects.Remove(subject);
+                        }
+                    }
+                    // These subjects need to be assigned to the teacher.
+                    var subjectsToPin = _dbContext
+                            .Subjects
+                            .Include(s => s.Teachers)
+                            .Where(s => subjectIds.Any(si => s.Id == si))
+                            .ToList();
+                    foreach (var subject in subjectsToPin)
+                    {
+                        teacher.Subjects.Add(subject);
+                    }
+                }
+                // If the ID of the subjects did not come
+                // from the front at all(their number is 0),
+                // then we unpin all the assigned subjects.
+                else
+                {
+                    foreach (var pinnedSubject in alreadyPinnedSubjects)
+                    {
+                        teacher.Subjects.Remove(pinnedSubject);
+                    }
+                }
+            }
+            // If not a single class is assigned to the teacher,
+            // then we simply attach all those who have come. 
+            else
+            {
+                var subjectsToPin = _dbContext
+                    .Subjects
+                    .Include(s => s.Teachers)
+                    .Where(s => subjectIds.Any(si => s.Id == si))
+                    .ToList();
+                foreach (var subject in subjectsToPin)
+                {
+                    teacher.Subjects.Add(subject);
                 }
             }
         }

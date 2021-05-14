@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolDiary.Domain.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SchoolDiary.Controllers
 {
@@ -18,9 +14,11 @@ namespace SchoolDiary.Controllers
     public class TeacherController : Controller
     {
         ITeacherService _teacherService;
-        public TeacherController(ITeacherService teacherService)
+        IMarkService _markService;
+        public TeacherController(ITeacherService teacherService, IMarkService markService)
         {
             _teacherService = teacherService;
+            _markService = markService;
         }
         /// <summary>
         /// Gets collection of classes, which 
@@ -39,6 +37,21 @@ namespace SchoolDiary.Controllers
             {
                 var pinnedClasses = _teacherService.GetPinnedClasses(teacherId);
                 return Ok(pinnedClasses);
+            }
+            return BadRequest(ModelState);
+        }
+        [HttpGet(nameof(GetStudentMarks))]
+        public IActionResult GetStudentMarks(int studentId, int subjectId)
+        {
+            if (ModelState.IsValid)
+            {
+                var studentMarks = _markService.GetConcreteStudentMarksBySubjectId(studentId, subjectId);
+                if (studentMarks != null)
+                {
+                    return Ok(studentMarks);
+                }
+                ModelState.AddModelError("Error", "Не удалось получить оценки ученика.");
+                return BadRequest(ModelState);
             }
             return BadRequest(ModelState);
         }

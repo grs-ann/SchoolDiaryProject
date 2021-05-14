@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolDiary.Domain.Data.Entities;
 using SchoolDiary.Helpers;
+using System;
+using System.Collections.Generic;
 
 namespace SchoolDiary.Domain.Data
 {
@@ -13,9 +15,7 @@ namespace SchoolDiary.Domain.Data
         public DbSet<Class> Classes { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
-        public DbSet<Day> Days { get; set; }
-        public DbSet<Time> Times { get; set; }
-        public DbSet<LessonTime> LessonTimes { get; set; }
+        public DbSet<Mark> Marks { get; set; }
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
@@ -38,6 +38,65 @@ namespace SchoolDiary.Domain.Data
                     Name = "8Б"
                 }
             });
+            var marks = new List<Mark>()
+            {
+                new Mark
+                {
+                    Id = 1,
+                    Name = "5"
+                },
+                new Mark
+                {
+                    Id = 2,
+                    Name = "4"
+                },
+                new Mark
+                {
+                    Id = 3,
+                    Name = "3"
+                },
+                new Mark
+                {
+                    Id = 4,
+                    Name = "2"
+                },
+                new Mark
+                {
+                    Id = 5,
+                    Name = "ОТ"
+                },
+                new Mark
+                {
+                    Id = 6,
+                    Name = "УП"
+                }
+            };
+            modelBuilder.Entity<Mark>().HasData(marks);
+
+            var subjects = new List<Subject>()
+            {
+                new Subject
+                {
+                    Id = 1,
+                    Title = "Алгебра"
+                },
+                new Subject
+                {
+                    Id = 2,
+                    Title = "Геометрия"
+                },
+                new Subject
+                {
+                    Id = 3,
+                    Title = "Физика"
+                },
+                new Subject
+                {
+                    Id = 4,
+                    Title = "Русский язык"
+                }
+            };
+            modelBuilder.Entity<Subject>().HasData(subjects);
             using (PasswordHasher ph = new PasswordHasher())
             {
                 var adminUser = new User
@@ -75,118 +134,39 @@ namespace SchoolDiary.Domain.Data
                 };
                 modelBuilder.Entity<User>().HasData(new User[] { adminUser, defaultUser, teacherUser });
                 modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, studentRole, teacherRole });
-                modelBuilder.Entity<Student>().HasData(new Student { Id = 1, UserId = defaultUser.Id, ClassId= studentClass.Id });
+
+                modelBuilder.Entity<Student>().HasData(new Student { Id = 1, UserId = defaultUser.Id, ClassId = studentClass.Id });
             }
-            modelBuilder.Entity<Subject>().HasData(new Subject[]
-            {
-                new Subject
-                {
-                    Id = 1,
-                    Title = "Алгебра"
-                },
-                new Subject
-                {
-                    Id = 2,
-                    Title = "Геометрия"
-                }, 
-                new Subject
-                {
-                    Id = 3,
-                    Title = "Физика"
-                },
-                new Subject
-                {
-                    Id = 4,
-                    Title = "Русский язык"
-                }
-            });
+            
             modelBuilder.Entity<Teacher>().HasData(new Teacher { Id = 1, Salary = 228000, UserId = 3 });
-            modelBuilder.Entity<Time>().HasData(
-                new Time[]
-                {
-                    new Time
-                    {
-                        Id = 1,
-                        LessonTime = "8:00-8:45"
-                    },
-                    new Time
-                    {
-                        Id = 2,
-                        LessonTime = "8:55-9:40"
-                    },
-                    new Time
-                    {
-                        Id = 3,
-                        LessonTime = "10:00-10:45"
-                    },
-                    new Time
-                    {
-                        Id = 4,
-                        LessonTime = "11:05-11:50"
-                    },
-                    new Time
-                    {
-                        Id = 5,
-                        LessonTime = "12:00-12:45"
-                    },
-                    new Time
-                    {
-                        Id = 6,
-                        LessonTime = "12:55-13:40"
-                    },
-                    new Time
-                    {
-                        Id = 7,
-                        LessonTime = "13:50-14:35"
-                    },
-                    new Time
-                    {
-                        Id = 8,
-                        LessonTime = "14:45-15:30"
-                    },
-                });
-            modelBuilder.Entity<Day>().HasData(new Day[]
-                    {
-                        new Day
-                        {
-                            Id = 1,
-                            Name = "Понедельник"
-                        },
-                        new Day
-                        {
-                            Id = 2,
-                            Name = "Вторник"
-                        },
-                        new Day
-                        {
-                            Id = 3,
-                            Name = "Среда"
-                        },
-                        new Day
-                        {
-                            Id = 4,
-                            Name = "Четверг"
-                        },
-                        new Day
-                        {
-                            Id = 5,
-                            Name = "Пятница"
-                        },
-                        new Day
-                        {
-                            Id = 6,
-                            Name = "Суббота"
-                        },
-                        new Day
-                        {
-                            Id = 7,
-                            Name = "Воскресенье"
-                        },
-                    });
+
+
             modelBuilder.Entity<Teacher>()
                 .HasMany(t => t.Classes)
                 .WithMany(c => c.Teachers)
                 .UsingEntity(j => j.ToTable("TeachersAndClasses"));
+
+            modelBuilder.Entity<Teacher>()
+                .HasMany(t => t.Subjects)
+                .WithMany(c => c.Teachers)
+                .UsingEntity(j => j.ToTable("TeachersAndSubjects"));
+
+            // Many to many relation for 'Mark' and 'Student' entities. 
+            modelBuilder.Entity<Mark>().HasMany(m => m.Students).WithMany(s => s.Marks)
+                .UsingEntity<Grade>(g => g
+                        .HasOne(pt => pt.Student)
+                        .WithMany(t => t.Grades)
+                        .HasForeignKey(pt => pt.StudentId),
+                        g => g
+                            .HasOne(pt => pt.Mark)
+                            .WithMany(p => p.Grades)
+                            .HasForeignKey(pt => pt.MarkId),
+                        g =>
+                        {
+                            g.Property(pt => pt.GradeDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+                            g.HasKey(t => new { t.MarkId, t.StudentId });
+                            g.ToTable("Grades");
+                        });
             base.OnModelCreating(modelBuilder);
         }
     }

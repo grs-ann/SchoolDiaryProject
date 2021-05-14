@@ -60,6 +60,11 @@
         <input type="checkbox" v-bind:value="cl.id" v-model="selectedClasses">
         <label>{{ cl.name }}</label><br/>
     </template>
+    <button @click="changePinnedSubjects">Изменить закрепленные предметы</button>
+    <template v-for="subject in subjects" v-if="subjectChangeClicked">
+        <input type="checkbox" v-bind:value="subject.id" v-model="selectedSubjects">
+        <label>{{ subject.title }}</label><br/>
+    </template> </br>
     <button @click="applyChanges">Принять изменения</button>
     <button @click="cancelChanges">Отменить изменения</button><br/>
 
@@ -68,13 +73,14 @@
 
 <script>
 import axios from 'axios';
-import { teacherService, classService } from "@/_services";
+import { teacherService, teacherManagementService, classService } from "@/_services";
 import { authenticationService } from '@/_services';
 
 export default {
   data() {
     return {
       classChangeClicked: false,
+      subjectChangeClicked: false,
       applySubmitted: false,
       validations: {
         login: "",
@@ -93,15 +99,23 @@ export default {
         phone: "",
         salary: "",
         id: "",
-        classIds: ""
+        classIds: "",
+        subjectIds: ""
       },
       classes: {},
+      subjects: {},
       // Хранит в себе список Id классов, закрепленных за учителем. 
       classIds: [],
       // Содержит список тех Id классов, которые выбраны в чекбоксах.
       // Так же, если какие то классы уже закреплены за учителем,
       // они будут выделены изначально.
       selectedClasses: [],
+      // Содержит список тех Id предметов, которые выбраны в чекбоксах.
+      // Так же, если какие то предметы уже закреплены за учителем,
+      // они будут выделены изначально. 
+      selectedSubjects: [],
+
+      
       styles: {
         validationStyle: {
           color: "red",
@@ -150,8 +164,7 @@ export default {
       this.teacherEditData.phone = this.teacherData.user.phone;
       this.teacherEditData.salary = this.teacherData.salary;
       this.teacherEditData.classIds = this.selectedClasses;
-
-      console.log(this.teacherEditData.classIds);
+      this.teacherEditData.subjectIds = this.selectedSubjects;
 
       if (isNaN(this.teacherEditData.salary)) {
         this.validations.salary = "Недопустимый формат для зарплаты!";
@@ -180,10 +193,34 @@ export default {
                 this.selectedClasses.push(data[prop].id);
             }
         })
-    }
+    },
+    changePinnedSubjects() {
+        this.subjectChangeClicked = this.subjectChangeClicked == false ? true : false
+        this.getSubjectsByTeacherId();
+    },
+    getSubjectsByTeacherId() {
+        const currentUser = authenticationService.currentUserValue || {};
+        const authHeader = currentUser.token ? { 'Authorization': 'Bearer ' + currentUser.token } : {}
+        axios.get('https://localhost:44303/api/Subject/GetPinnedSubjectsByTeacherId', {
+            params: {
+                teacherId: this.teacherData.userId
+            },
+            headers: {
+                ...authHeader
+            }
+        })
+        .then(response => {
+            let data = response.data;
+            console.log(data);
+            for(let prop in data) {
+                this.selectedSubjects.push(data[prop].id);
+            }
+        })
+    },
   },
   created() {
-    classService.GetAllClasses().then((classes) => (this.classes = classes));
+    classService.GetAllClasses().then(classes => this.classes = classes);
+    teacherManagementService.GetAllSubjects().then(subjects => this.subjects = subjects);
   },
 };
 </script>

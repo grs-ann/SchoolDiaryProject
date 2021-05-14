@@ -13,6 +13,7 @@
         <concreteClassWithStudents
             v-show="!concretePinnedClassesVisibility"
             :concreteClassData="concreteClassDataToManage"
+            :pinnedSubjects="pinnedSubjects"
         />
     </div>
 </template>
@@ -26,20 +27,23 @@ import { authenticationService } from '@/_services';
 import concretePinnedClass from './ConcretePinnedClasses';
 import concreteClassWithStudents from './ConcreteClassWithStudents';
 
+
 export default {
     data() {
         return {
             classes: [],
             concretePinnedClassesVisibility: true,
-            concreteClassDataToManage: {}
+            concreteClassDataToManage: {},
+            pinnedSubjects: []
         }
     },
     components: {
         concretePinnedClass,
-        concreteClassWithStudents
+        concreteClassWithStudents,
     },
     created() {
         this.getPinnedClasses();
+        this.getPinnedSubjects();
     },
     methods: {
         getPinnedClasses() {
@@ -56,6 +60,21 @@ export default {
         .then(response => {
             this.classes = response.data;
         })},
+        getPinnedSubjects() {
+            const currentUser = authenticationService.currentUserValue || {};
+            const authHeader = currentUser.token ? { 'Authorization': 'Bearer ' + currentUser.token } : {}
+            axios.get('https://localhost:44303/api/Subject/GetPinnedSubjectsByTeacherId', {
+                params: {
+                    teacherId: currentUser.id
+                },
+                headers: {
+                    ...authHeader
+                }
+            })
+            .then(response => {
+                this.pinnedSubjects = response.data
+            })
+        },
         concretePinnedClassesVisibilityChange(data) {
             this.concretePinnedClassesVisibility = this.concretePinnedClassesVisibility == false ? true : false;
             this.concreteClassDataToManage = data;

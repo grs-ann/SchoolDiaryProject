@@ -1,7 +1,9 @@
 import { handleResponse, requestOptions } from '@/_helpers';
 
-export const teacherService = {
-    getPinnedClasses
+export const teacherManagementService = {
+    getPinnedClasses,
+    GetAllSubjects,
+    GetStudentMarks
 };
 
 
@@ -11,5 +13,22 @@ export const teacherService = {
  */
 function getPinnedClasses() {
     return fetch(`${requestOptions.aspRoute}/api/TeachersEdit/GetAllTeachers`, requestOptions.get())
+        .then(handleResponse);
+}
+/**
+ * Получает коллекцию всех предметов, хранящихся в бд.
+ * @returns Результат запроса к бд.
+ */
+function GetAllSubjects() {
+    return fetch(`${requestOptions.aspRoute}/api/Subject/GetAll`, requestOptions.get())
+        .then(handleResponse);
+}
+/**
+ * Получает коллекцию оценок ученика, хранящихся в бд.
+ * @param {*} studentMarkModel Содержит id ученика и id предмета.
+ * @returns Результат запроса к бд.
+ */
+function GetStudentMarks(studentMarkModel) {
+    return fetch(`${requestOptions.aspRoute}/api/Teacher/GetStudentMarks`, requestOptions.get(studentMarkModel))
         .then(handleResponse);
 }

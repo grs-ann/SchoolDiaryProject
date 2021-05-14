@@ -14,6 +14,7 @@ using SchoolDiary.Helpers.Interfaces;
 using Microsoft.AspNetCore.CookiePolicy;
 using VueCliMiddleware;
 using System.Text;
+using System.Linq;
 
 namespace SchoolDiary
 {
@@ -42,6 +43,8 @@ namespace SchoolDiary
             services.AddTransient<IStudentsEditService, StudentsEditService>();
             services.AddTransient<IScheduleEditService, ScheduleEditService>();
             services.AddTransient<ITeacherService, TeacherService>();
+            services.AddTransient<ISubjectService, SubjectService>();
+            services.AddTransient<IMarkService, MarkService>();
             services.AddHttpContextAccessor();
             // Adding database context.
             services.AddDbContext<DataContext>(options => 
@@ -74,7 +77,7 @@ namespace SchoolDiary
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DataContext db)
         {
             if (env.IsDevelopment())
             {

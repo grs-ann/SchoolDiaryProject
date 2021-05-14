@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace SchoolDiary.Domain.Data.Entities
 {
@@ -13,5 +10,6 @@ namespace SchoolDiary.Domain.Data.Entities
         public int UserId { get; set; }
 
         public List<Class> Classes{ get; set; } = new List<Class>();
+        public List<Subject> Subjects { get; set; } = new List<Subject>();
     }
 }

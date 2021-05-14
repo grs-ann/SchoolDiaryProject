@@ -1,9 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace SchoolDiary.Domain.Data.Entities
 {
@@ -16,5 +11,8 @@ namespace SchoolDiary.Domain.Data.Entities
         // Link to 'Users' table.
         public User User { get; set; }
         public int UserId { get; set; }
+
+        public List<Mark> Marks { get; set; } = new List<Mark>();
+        public List<Grade> Grades { get; set; } = new List<Grade>();
     }
 }

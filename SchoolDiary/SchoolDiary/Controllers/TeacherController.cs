@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolDiary.Domain.Services;
+using System;
 
 namespace SchoolDiary.Controllers
 {
@@ -41,11 +42,24 @@ namespace SchoolDiary.Controllers
             return BadRequest(ModelState);
         }
         [HttpGet(nameof(GetStudentMarks))]
-        public IActionResult GetStudentMarks(int studentId, int subjectId)
+        public IActionResult GetStudentMarks(int studentId, int subjectId, string firstDate, string lastDate)
         {
+            if (!(studentId > 0 && subjectId > 0 && firstDate != null && lastDate != null))
+            {
+                ModelState.AddModelError("Error", "Ошибка валидации данных.");
+            }
+            DateTime firstDateObject;
+            DateTime lastDateObject;
+            var firstParsingResult = DateTime.TryParse(firstDate, out firstDateObject);
+            var lastParsingResult = DateTime.TryParse(lastDate, out lastDateObject);
+            if (!(firstParsingResult && lastParsingResult))
+            {
+                ModelState.AddModelError("Error", "Не удалось преобразовать строковые значения, пришедшие с клиента.");
+            }
             if (ModelState.IsValid)
             {
-                var studentMarks = _markService.GetConcreteStudentMarksBySubjectId(studentId, subjectId);
+                
+                var studentMarks = _markService.GetConcreteStudentMarksBySubjectId(studentId, subjectId, firstDateObject, lastDateObject);
                 if (studentMarks != null)
                 {
                     return Ok(studentMarks);

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolDiary.Domain.Data;
 using SchoolDiary.Domain.Data.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,7 +9,7 @@ namespace SchoolDiary.Domain.Services
 {
     public interface IMarkService
     {
-        IEnumerable<Mark> GetConcreteStudentMarksBySubjectId(int studentId, int subjectId);
+        IEnumerable<Mark> GetConcreteStudentMarksBySubjectId(int studentId, int subjectId, DateTime firstDate, DateTime lastDate);
     }
     public class MarkService : IMarkService
     {
@@ -23,7 +24,7 @@ namespace SchoolDiary.Domain.Services
         /// </summary>
         /// <param name="model">Contains studentId and subjectId</param>
         /// <returns>Collection of marks.</returns>
-        public IEnumerable<Mark> GetConcreteStudentMarksBySubjectId(int studentId, int subjectId)
+        public IEnumerable<Mark> GetConcreteStudentMarksBySubjectId(int studentId, int subjectId, DateTime firstDate, DateTime lastDate)
         {
             var student = _dbContext
                 .Students

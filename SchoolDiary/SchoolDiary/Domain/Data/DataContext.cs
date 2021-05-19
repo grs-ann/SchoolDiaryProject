@@ -164,7 +164,7 @@ namespace SchoolDiary.Domain.Data
                         g =>
                         {
                             g.Property(pt => pt.GradeDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
-                            g.HasKey(t => new { t.MarkId, t.StudentId });
+                            g.HasKey(pt => pt.Id);
                             g.ToTable("Grades");
                         });
             base.OnModelCreating(modelBuilder);

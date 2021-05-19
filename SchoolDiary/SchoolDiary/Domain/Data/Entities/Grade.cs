@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SchoolDiary.Domain.Data.Entities
 {
-    public class Grade
+    public class Grade : BaseEntity
     {
         public int StudentId { get; set; }
         public Student Student { get; set; }

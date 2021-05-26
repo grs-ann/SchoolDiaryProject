@@ -3,6 +3,7 @@ using SchoolDiary.Domain.Data.Entities;
 using SchoolDiary.Helpers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SchoolDiary.Domain.Data
 {
@@ -16,10 +17,9 @@ namespace SchoolDiary.Domain.Data
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<Mark> Marks { get; set; }
-
+        
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-            //Database.EnsureDeleted();
             Database.EnsureCreated();
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }

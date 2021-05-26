@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SchoolDiary.Domain.Models.Mark;
 using SchoolDiary.Domain.Services;
 using System;
 
@@ -66,6 +67,43 @@ namespace SchoolDiary.Controllers
                 }
                 ModelState.AddModelError("Error", "Не удалось получить оценки ученика.");
                 return BadRequest(ModelState);
+            }
+            return BadRequest(ModelState);
+        }
+        [HttpGet(nameof(GetAllMarks))]
+        public IActionResult GetAllMarks()
+        {
+            var marks = _markService.GetAllMarks();
+            if (marks != null)
+            {
+                return Ok(marks);
+            }
+            ModelState.AddModelError("Error", "Не удалось получить данные об оценках из БД.");
+            return BadRequest(ModelState);
+        }
+        [HttpPut(nameof(ChangeMark))]
+        public IActionResult ChangeMark(MarkToChangeModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var changedMark = _markService.ChangeMark(model);
+                if (changedMark != null)
+                {
+                    return Ok();
+                }
+            }
+            return BadRequest(ModelState);
+        }
+        [HttpPost(nameof(AddNewMark))]
+        public IActionResult AddNewMark(MarkToAddModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var addedMark = _markService.AddNewMarkAsync(model);
+                if (addedMark.Result != null )
+                {
+                    return Ok(addedMark);
+                }
             }
             return BadRequest(ModelState);
         }

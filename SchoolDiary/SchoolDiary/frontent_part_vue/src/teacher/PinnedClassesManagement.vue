@@ -3,7 +3,6 @@
         <h1>Управление закрепленными классами.</h1>
         <concretePinnedClass
             v-show="concretePinnedClassesVisibility"
-
             v-for="(cl, index) in classes"
             :key="index"
             :index="index"

@@ -1,26 +1,37 @@
 <template>
     <div>
-        <div v-bind:style="styles">
+        <div v-show="!studentMarksShowing">
             <div>
-                <p  v-show="clientValidations.dateErrorMessage">{{ clientValidations.date }}</p>
-                <Calendar
-                    @dateChange="getChangedDate"
-                />
+                <div>
+                    <p v-bind:style="styles" v-show="clientValidations.dateErrorMessage">{{ clientValidations.date }}</p>
+                    <Calendar
+                        @dateChange="getChangedDate"
+                    />
+                </div>
+                <div>
+                    <p v-bind:style="styles" v-show="clientValidations.subjectErrorMessage">{{ clientValidations.subject }}</p>
+                    <select v-model="selectedSubject">
+                        <option v-for="(subject, index) in pinnedSubjects" v-bind:value="subject">{{ subject.title }}</option>
+                    </select>
+                </div>
             </div>
-            <div>
-                <p v-show="clientValidations.subjectErrorMessage">{{ clientValidations.subject }}</p>
-                <select v-model="selectedSubject">
-                    <option v-for="(subject, index) in pinnedSubjects" v-bind:value="subject">{{ subject.title }}</option>
-                </select>
+            <div v-for="(cl, index) in this.concreteClassData.students">
+                {{ index + 1 }})
+                {{ cl.user.lastname }}
+                {{ cl.user.firstname }}
+                <button @click="showMarks(cl.id)">Показать оценки</button>
             </div>
         </div>
-        <div v-for="(cl, index) in this.concreteClassData.students">
-            {{ index + 1 }})
-            {{ cl.user.lastname }}
-            {{ cl.user.firstname }}
-            <button @click="showMarks(cl.id)">Показать оценки</button>
+        <div v-show="studentMarksShowing">
+            <ConcreteStudentMarks
+                :grades="studentMarks"
+            />
         </div>
-        
+        <div v-if="studentMarksShowing">
+            <AddNewMark
+                :marks="studentMarks"
+            />
+        </div>
     </div>
 </template>
 
@@ -28,20 +39,24 @@
 import { teacherManagementService, authenticationService } from "@/_services";
 import axios from 'axios';
 import Calendar from './Calendar';
-
-
+import ConcreteStudentMarks from './ConcreteStudentMarks';
+import AddNewMark from './AddNewMark';
 export default {
     components: {
-        Calendar
+        Calendar,
+        ConcreteStudentMarks,
+        AddNewMark
     },
     data() {
         return {
             students: [],
             selectedSubject: null,
-            studentMarks: {},
+            // Содержит в себе коллекцию оценок для выбранного студента.
+            studentMarks: null,
             firstDate: null,
             lastDate: null,
 
+            studentMarksShowing: false,
             clientValidations: {
                 date: 'Необходимо выбрад период дат!',
                 dateErrorMessage: false,
@@ -80,8 +95,6 @@ export default {
             }
             const currentUser = authenticationService.currentUserValue || {};
             const authHeader = currentUser.token ? { 'Authorization': 'Bearer ' + currentUser.token } : {}
-
-            console.log(this.studentMarksModel);
             axios.get('https://localhost:44303/api/Teacher/GetStudentMarks', {
                 params: {
                     studentId: studentId,
@@ -94,7 +107,8 @@ export default {
                 }
             })
             .then(response => {
-                console.log(response.data)
+                this.studentMarks = response.data
+                this.studentMarksShowing = true;
             })},
         getChangedDate(data) {
             this.firstDate = data[0];

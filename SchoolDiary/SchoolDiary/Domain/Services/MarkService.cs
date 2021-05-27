@@ -5,7 +5,6 @@ using SchoolDiary.Domain.Models.Mark;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace SchoolDiary.Domain.Services
 {
@@ -14,7 +13,7 @@ namespace SchoolDiary.Domain.Services
         IEnumerable<Grade> GetConcreteStudentMarksBySubjectId(int studentId, int subjectId, DateTime firstDate, DateTime lastDate);
         IEnumerable<Mark> GetAllMarks();
         Grade ChangeMark(MarkToChangeModel model);
-        Task<Grade> AddNewMarkAsync(MarkToAddModel model);
+        Grade AddNewMark(MarkToAddModel model);
     }
     public class MarkService : IMarkService
     {
@@ -30,25 +29,21 @@ namespace SchoolDiary.Domain.Services
         /// <param name="model">Contains mark datetime,
         /// studentId, subjectId, markId.</param>
         /// <returns></returns>
-        public async Task<Grade> AddNewMarkAsync(MarkToAddModel model)
+        public Grade AddNewMark(MarkToAddModel model)
         {
-            var grades = await _dbContext
-                .Marks
-                .Include(m => m.Grades)
-                .SelectMany(m => m.Grades)
-                .ToListAsync();
-            if (grades != null)
+            var gradeToAdd = new Grade
             {
-                var markToAdd = new Grade
-                {
-                    GradeDate = model.MarkTime,
-                    MarkId = model.SelectedMarkId,
-                    StudentId = model.StudentId,
-                    SubjectId = model.SubjectId
-                };
-                grades.Add(markToAdd);
+                GradeDate = model.MarkTime,
+                MarkId = model.SelectedMarkId,
+                StudentId = model.StudentId,
+                SubjectId = model.SubjectId
+            };
+            
+            if (gradeToAdd != null)
+            {
+                _dbContext.Add(gradeToAdd);
                 _dbContext.SaveChanges();
-                return markToAdd;
+                return gradeToAdd;
             }
             return null;
         }

@@ -99,8 +99,8 @@ namespace SchoolDiary.Controllers
         {
             if (ModelState.IsValid)
             {
-                var addedMark = _markService.AddNewMarkAsync(model);
-                if (addedMark.Result != null )
+                var addedMark = _markService.AddNewMark(model);
+                if (addedMark != null )
                 {
                     return Ok(addedMark);
                 }
